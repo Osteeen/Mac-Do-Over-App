@@ -37,6 +37,9 @@ export class Journal {
     this.own.set(fileKey(dev, ino), Date.now() + ttlMs);
   }
 
+  /** Undo expectOwnMove when the move did not happen, so a real later move of that file is not swallowed. */
+  cancelOwnMove(dev: bigint, ino: bigint): void { this.own.delete(fileKey(dev, ino)); }
+
   /** The file with identity `key` was at `oldPath` and is now at `newPath`. Called by the move detector. */
   recordRelocation(key: FileKey, dev: bigint, ino: bigint, oldPath: string, newPath: string, ts: number): void {
     const ownUntil = this.own.get(key);

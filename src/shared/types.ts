@@ -116,7 +116,8 @@ export interface RestoreRequest { candidateId: CandidateId; token: string; mode:
 
 export type RefusalReason =
   | 'destination_occupied' | 'source_missing' | 'source_changed' | 'symlink'
-  | 'unsupported_filesystem' | 'cross_volume' | 'unknown_candidate' | 'token_invalid' | 'token_expired';
+  | 'unsupported_filesystem' | 'cross_volume' | 'unknown_candidate' | 'token_invalid' | 'token_expired'
+  | 'destination_missing' | 'io_error' | 'halted';
 
 export type RestoreResult =
   | { status: 'restored'; candidateId: CandidateId; name: string; to: string }
