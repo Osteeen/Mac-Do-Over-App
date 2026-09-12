@@ -1,0 +1,313 @@
+{
+  "_note": "Example data for screens and tests before the real journal exists. Shapes follow src/shared/types.ts. Invented, not user data. c4 has a right-to-left override (U+202E): it renders as \"invoiceexe.txt\" but is an .exe - screens must show the BIDI HELD badge.",
+  "stripSnapshot": {
+    "snapshotId": "s1",
+    "frozenAt": 1789211280000,
+    "events": [
+      {
+        "id": "e1",
+        "ts": 1789210931000,
+        "kind": "file.move",
+        "name": "Q3-report.pdf",
+        "from": "~/Desktop",
+        "to": "~/Documents/Archive/2019"
+      },
+      {
+        "id": "e2",
+        "ts": 1789210960000,
+        "kind": "file.rename",
+        "name": "budget.xlsx",
+        "newName": "budget-2026.xlsx",
+        "dir": "~/Desktop"
+      },
+      {
+        "id": "e3",
+        "ts": 1789210995000,
+        "kind": "file.move",
+        "name": "photos.zip",
+        "from": "~/Downloads",
+        "to": "~/Documents/Archive"
+      },
+      {
+        "id": "e4",
+        "ts": 1789211070000,
+        "kind": "window.front",
+        "appName": "Google Chrome",
+        "title": "New Tab"
+      },
+      {
+        "id": "e5",
+        "ts": 1789211162000,
+        "kind": "file.move",
+        "name": "reconciliation-notes.md",
+        "from": "~/Desktop",
+        "to": "~/.Trash"
+      },
+      {
+        "id": "e6",
+        "ts": 1789211240000,
+        "kind": "file.move",
+        "name": "invoice‮txt.exe",
+        "from": "~/Downloads",
+        "to": "~/Desktop"
+      }
+    ],
+    "candidates": [
+      {
+        "id": "c1",
+        "kind": "move_back",
+        "name": "Q3-report.pdf",
+        "from": "~/Documents/Archive/2019",
+        "to": "~/Desktop",
+        "observedAt": 1789210931000,
+        "eventId": "e1",
+        "fromTrash": false,
+        "nameFlags": []
+      },
+      {
+        "id": "c2",
+        "kind": "move_back",
+        "name": "photos.zip",
+        "from": "~/Documents/Archive",
+        "to": "~/Downloads",
+        "observedAt": 1789210995000,
+        "eventId": "e3",
+        "fromTrash": false,
+        "nameFlags": []
+      },
+      {
+        "id": "c3",
+        "kind": "move_back",
+        "name": "reconciliation-notes.md",
+        "from": "~/.Trash",
+        "to": "~/Desktop",
+        "observedAt": 1789211162000,
+        "eventId": "e5",
+        "fromTrash": true,
+        "nameFlags": []
+      },
+      {
+        "id": "c4",
+        "kind": "move_back",
+        "name": "invoice‮txt.exe",
+        "from": "~/Desktop",
+        "to": "~/Downloads",
+        "observedAt": 1789211240000,
+        "eventId": "e6",
+        "fromTrash": false,
+        "nameFlags": [
+          "bidi"
+        ]
+      }
+    ]
+  },
+  "findPreview": {
+    "snapshotId": "s1",
+    "provider": "OpenAI",
+    "model": "gpt-5-mini",
+    "bytes": 1311,
+    "eventCount": 6,
+    "candidateCount": 4,
+    "notSent": [
+      "Any picture of your screen",
+      "What is inside your files",
+      "Anything you typed except this sentence",
+      "Your Mac's user name or full disk paths"
+    ],
+    "payload": {
+      "now": 1789211280000,
+      "timeline": [
+        {
+          "id": "e1",
+          "ts": 1789210931000,
+          "kind": "file.move",
+          "name": "Q3-report.pdf",
+          "from": "~/Desktop",
+          "to": "~/Documents/Archive/2019"
+        },
+        {
+          "id": "e2",
+          "ts": 1789210960000,
+          "kind": "file.rename",
+          "name": "budget.xlsx",
+          "newName": "budget-2026.xlsx",
+          "dir": "~/Desktop"
+        },
+        {
+          "id": "e3",
+          "ts": 1789210995000,
+          "kind": "file.move",
+          "name": "photos.zip",
+          "from": "~/Downloads",
+          "to": "~/Documents/Archive"
+        },
+        {
+          "id": "e4",
+          "ts": 1789211070000,
+          "kind": "window.front",
+          "appName": "Google Chrome",
+          "title": "New Tab"
+        },
+        {
+          "id": "e5",
+          "ts": 1789211162000,
+          "kind": "file.move",
+          "name": "reconciliation-notes.md",
+          "from": "~/Desktop",
+          "to": "~/.Trash"
+        },
+        {
+          "id": "e6",
+          "ts": 1789211240000,
+          "kind": "file.move",
+          "name": "invoice‮txt.exe",
+          "from": "~/Downloads",
+          "to": "~/Desktop"
+        }
+      ],
+      "candidates": [
+        {
+          "id": "c1",
+          "kind": "move_back",
+          "name": "Q3-report.pdf",
+          "from": "~/Documents/Archive/2019",
+          "to": "~/Desktop",
+          "observedAt": 1789210931000
+        },
+        {
+          "id": "c2",
+          "kind": "move_back",
+          "name": "photos.zip",
+          "from": "~/Documents/Archive",
+          "to": "~/Downloads",
+          "observedAt": 1789210995000
+        },
+        {
+          "id": "c3",
+          "kind": "move_back",
+          "name": "reconciliation-notes.md",
+          "from": "~/.Trash",
+          "to": "~/Desktop",
+          "observedAt": 1789211162000
+        },
+        {
+          "id": "c4",
+          "kind": "move_back",
+          "name": "invoice‮txt.exe",
+          "from": "~/Desktop",
+          "to": "~/Downloads",
+          "observedAt": 1789211240000
+        }
+      ],
+      "reference": "the document I moved before I opened the browser"
+    }
+  },
+  "findResults": {
+    "matched": {
+      "status": "matched",
+      "matches": [
+        {
+          "candidateId": "c1",
+          "why": "The only document moved before Google Chrome came to the front at 12:04.",
+          "evidenceEventIds": [
+            "e1",
+            "e4"
+          ]
+        }
+      ],
+      "caveats": []
+    },
+    "several": {
+      "status": "matched",
+      "matches": [
+        {
+          "candidateId": "c1",
+          "why": "Moved into Documents/Archive/2019.",
+          "evidenceEventIds": [
+            "e1"
+          ]
+        },
+        {
+          "candidateId": "c2",
+          "why": "Moved into Documents/Archive.",
+          "evidenceEventIds": [
+            "e3"
+          ]
+        }
+      ],
+      "caveats": [
+        "Both files went into an Archive folder. Pick the one you mean."
+      ]
+    },
+    "noMatch": {
+      "status": "no_match",
+      "caveats": [
+        "Nothing was recorded about what is inside a file."
+      ]
+    },
+    "invalid": {
+      "status": "invalid",
+      "reason": "The answer cited candidate c9, which is not in this snapshot."
+    },
+    "offline": {
+      "status": "offline",
+      "reason": "No connection. You can still pick from the list."
+    }
+  },
+  "approvalSheets": {
+    "clear": {
+      "candidateId": "c1",
+      "token": "tok-example-1",
+      "expiresAt": 1789211340000,
+      "name": "Q3-report.pdf",
+      "nameFlags": [],
+      "from": "~/Documents/Archive/2019",
+      "to": "~/Desktop",
+      "destinationOccupied": false,
+      "recoveredName": null
+    },
+    "occupied": {
+      "candidateId": "c1",
+      "token": "tok-example-2",
+      "expiresAt": 1789211340000,
+      "name": "Q3-report.pdf",
+      "nameFlags": [],
+      "from": "~/Documents/Archive/2019",
+      "to": "~/Desktop",
+      "destinationOccupied": true,
+      "recoveredName": "Q3-report (recovered).pdf"
+    },
+    "hostile": {
+      "candidateId": "c4",
+      "token": "tok-example-3",
+      "expiresAt": 1789211340000,
+      "name": "invoice‮txt.exe",
+      "nameFlags": [
+        "bidi"
+      ],
+      "from": "~/Desktop",
+      "to": "~/Downloads",
+      "destinationOccupied": false,
+      "recoveredName": null
+    }
+  },
+  "restoreResults": {
+    "restored": {
+      "status": "restored",
+      "candidateId": "c1",
+      "name": "Q3-report.pdf",
+      "to": "~/Desktop"
+    },
+    "refused": {
+      "status": "refused",
+      "candidateId": "c1",
+      "reason": "destination_occupied",
+      "message": "Desktop already has a file called Q3-report.pdf. Nothing was changed."
+    },
+    "incident": {
+      "status": "incident",
+      "candidateId": "c1",
+      "message": "The file that moved is not the one that was recorded. Stopped and recorded. Nothing else was touched."
+    }
+  }
+}

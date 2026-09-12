@@ -6,6 +6,18 @@ export const CH = {
   overlayHide: 'overlay:hide',
   edgeActivated: 'edge:activated',
   appInfo: 'app:info',
+
+  // Mac Do Over. Argument and result shapes are in types.ts.
+  /** () => StripSnapshot */
+  stripSnapshot: 'strip:snapshot',
+  /** (snapshotId: string, reference: string) => FindPreview */
+  findPreview: 'find:preview',
+  /** (snapshotId: string, reference: string) => FindResult */
+  findSend: 'find:send',
+  /** (snapshotId: string, candidateId: string) => ApprovalSheet */
+  approvalOpen: 'approval:open',
+  /** (request: RestoreRequest) => RestoreResult */
+  restoreApprove: 'restore:approve',
 } as const;
 export type Channel = typeof CH[keyof typeof CH];
 
