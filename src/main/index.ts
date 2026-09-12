@@ -27,6 +27,9 @@ let edge: BrowserWindow | null = null;
 let onboarding: BrowserWindow | null = null;
 /** When blur last hid the overlay. A tray click right after it is the same click, not a reopen. */
 let lastBlurHideAt = 0;
+/** The pulsing tray icon: frame count and interval (about 1.3 s per pulse). Stopped on quit. */
+const PULSE_FRAMES = 12, PULSE_MS = 110;
+let pulseTimer: ReturnType<typeof setInterval> | null = null;
 let journal: Journal | null = null;
 let detector: MoveDetector | null = null;
 let executor: Executor | null = null;
@@ -64,9 +67,13 @@ function toggleOverlay(): void {
 }
 
 function buildTray(): void {
-  // The ring icon in green. Not a template image, so macOS does not recolour it for light or dark menu bars.
-  const icon = nativeImage.createFromPath(path.join(app.getAppPath(), 'assets', 'trayRing.png'));
-  tray = new Tray(icon);
+  // A green dot with a slowly pulsing halo, the menu bar's sign that Mac Do Over is recording. Not template
+  // images, so macOS keeps them green. Twelve pre-drawn frames, swapped about nine times a second.
+  const frames = Array.from({ length: PULSE_FRAMES }, (_, i) =>
+    nativeImage.createFromPath(path.join(app.getAppPath(), 'assets', 'tray', `pulse-${String(i).padStart(2, '0')}.png`)));
+  tray = new Tray(frames[0]);
+  let frame = 0;
+  pulseTimer = setInterval(() => { frame = (frame + 1) % frames.length; tray?.setImage(frames[frame]); }, PULSE_MS);
   tray.setToolTip(app.getName());
   // Gate and debug tools stay available for troubleshooting, but only when STARTER_DEBUG is set.
   const debugItems: Electron.MenuItemConstructorOptions[] = !process.env.STARTER_DEBUG ? [] : [
@@ -259,6 +266,7 @@ app.on('before-quit', (e) => {
   if (shuttingDown) return;
   e.preventDefault();
   shuttingDown = true;
+  if (pulseTimer) { clearInterval(pulseTimer); pulseTimer = null; }
   globalShortcut.unregisterAll();
   stopCapture();
   stopWindowSensor();
