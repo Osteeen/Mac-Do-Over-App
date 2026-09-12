@@ -1,4 +1,4 @@
-# Desktop Agent Starter
+# Mac Do Over
 
 A generic **macOS** starter for desktop agents built on Electron and TypeScript.
 

@@ -1,5 +1,5 @@
 appId: com.example.desktop-agent-starter
-productName: Desktop Agent Starter
+productName: Mac Do Over
 # output dir is passed on the command line (see package.json "package"): electron-builder rejects paths containing shell-special characters such as '&'.
 files:
   - dist/**

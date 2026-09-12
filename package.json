@@ -1,8 +1,8 @@
 {
-  "name": "desktop-agent-starter",
+  "name": "mac-do-over",
   "version": "0.1.0",
   "private": true,
-  "description": "Generic macOS starter for desktop agents: Electron shell, overlay and edge windows, permission onboarding, hardened IPC, a screen-capture ring buffer, input and window sensors, and a no-overwrite rename primitive. No product logic.",
+  "description": "Mac Do Over finds the file mistake you mean and puts that file back, while leaving everything else alone. macOS only.",
   "main": "dist/main/index.js",
   "type": "commonjs",
   "license": "MIT",
@@ -44,6 +44,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Osteeen/desktop-agent-starter.git"
+    "url": "https://github.com/Osteeen/macdoover.git"
   }
 }
