@@ -32,6 +32,8 @@ export class MoveDetector extends EventEmitter {
   private readonly pending = new Map<FileKey, NodeJS.Timeout>();
   private watcher: FSWatcher | null = null;
   private ready = false;
+  /** Set once the OS refuses more watchers, so the log gets one clear warning instead of a flood. */
+  private overLimit = false;
 
   constructor(private readonly journal: Journal) { super(); }
 
@@ -49,7 +51,17 @@ export class MoveDetector extends EventEmitter {
     this.watcher.on('change', (p) => this.onChange(p));
     this.watcher.on('unlink', (p) => this.onUnlink(p));
     this.watcher.on('ready', () => { this.ready = true; this.emit('ready', this.byPath.size); });
-    this.watcher.on('error', (e) => this.emit('error', e));
+    this.watcher.on('error', (e) => {
+      const code = (e as NodeJS.ErrnoException).code;
+      if (code === 'EMFILE' || code === 'ENOSPC') {
+        // Folders already being watched keep working; the rest are not observed. Say so once.
+        if (this.overLimit) return;
+        this.overLimit = true;
+        this.emit('error', new Error(`macOS refused to watch more folders (${code}). Folders already watched still work; the rest are not observed. Watch fewer folders.`));
+        return;
+      }
+      this.emit('error', e);
+    });
   }
 
   async close(): Promise<void> {
