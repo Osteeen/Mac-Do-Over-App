@@ -60,7 +60,7 @@ export function watchRoots(): WatchRoots {
   }
   const requested = explicit
     ? raw!.split(':').map(s => s.trim()).filter(Boolean)
-    : ['Desktop', 'Documents', 'Downloads'].map(d => path.join(home, d));
+    : ['Desktop', 'Documents', 'Downloads', 'Music', 'Pictures', 'Movies'].map(d => path.join(home, d));
 
   const roots: string[] = [];
   for (const r of requested) {

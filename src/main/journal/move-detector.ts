@@ -10,12 +10,15 @@ function lstatBig(p: string): fs.BigIntStats | null {
   try { return fs.lstatSync(p, { bigint: true }); } catch { return null; }
 }
 
+/** Apps and media libraries are folders their apps rewrite constantly; nothing inside them is a user's file to put back. */
+const BUNDLES = ['.app', '.photoslibrary', '.photolibrary', '.musiclibrary', '.tvlibrary', '.imovielibrary', '.fcpbundle', '.band', '.logicx'];
+
 /** Hidden files, bundles and dependency trees are never candidates. Only files directly inside the Trash are watched. */
 function ignored(p: string, trash: string | null): boolean {
   if (trash && p === trash) return false;
   if (trash && p.startsWith(trash + path.sep)) return path.relative(trash, p).includes(path.sep) || path.basename(p) === '.DS_Store';
   const base = path.basename(p);
-  return base.startsWith('.') || base === 'node_modules' || base.endsWith('.app') || base.endsWith('.photoslibrary');
+  return base.startsWith('.') || base === 'node_modules' || BUNDLES.some((ext) => base.endsWith(ext));
 }
 
 /**

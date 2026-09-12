@@ -140,7 +140,9 @@ Start it, watching folders of your choice (colon-separated):
 DESKTOP_AGENT_ROOTS="$HOME/path/to/FolderA:$HOME/path/to/FolderB" npm start
 ```
 
-Without `DESKTOP_AGENT_ROOTS` it watches `~/Desktop`, `~/Documents` and `~/Downloads`. The real
+Without `DESKTOP_AGENT_ROOTS` it watches `~/Desktop`, `~/Documents`, `~/Downloads`, `~/Music`, `~/Pictures`
+and `~/Movies`, three folder levels deep (`DESKTOP_AGENT_DEPTH`, 1 to 6, changes that). App bundles and
+photo, music and TV libraries are skipped. The real
 `~/.Trash` is always watched, even when you override the folders, so a file you trash while
 trying it out is observed in your actual Trash. The tray item "Watched folders" shows exactly
 what is being observed.
