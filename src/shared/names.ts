@@ -3,7 +3,7 @@ import type { NameFlag } from './types.js';
 // Written as escapes on purpose: the characters themselves are invisible in an editor and a diff.
 const BIDI = /[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/;
 const NEWLINE = /[\r\n\u2028\u2029]/;
-const CONTROL = /[\u0000-\u0009\u000B\u000C\u000E-\u001F\u007F]/;
+const CONTROL = /[\u0000-\u0009\u000B\u000C\u000E-\u001F\u007F-\u009F\u00AD\u115F\u1160\u180E\u200B-\u200D\u2060-\u2064\u3164\uFEFF\uFFA0]/;
 /** Looks like a tag or an HTML entity. Apostrophes and ampersands in ordinary names are not flagged. */
 const MARKUP = /<[a-zA-Z/!]|&[#a-zA-Z0-9]+;/;
 

@@ -5,7 +5,7 @@ export const NOT_SENT = [
   'Any picture of your screen',
   'What is inside your files',
   'Anything you typed except this sentence',
-  "Your Mac's user name or full disk paths",
+  'Full disk paths of the files on this list',
 ];
 
 export const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-5-mini';

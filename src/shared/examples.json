@@ -112,7 +112,7 @@
       "Any picture of your screen",
       "What is inside your files",
       "Anything you typed except this sentence",
-      "Your Mac's user name or full disk paths"
+      "Full disk paths of the files on this list"
     ],
     "payload": {
       "now": 1789211280000,

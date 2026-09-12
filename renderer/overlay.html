@@ -1,33 +1,375 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Mac Do Over</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; form-action 'none'; base-uri 'none'">
 <style>
   :root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;color:#f2f5f2;background:transparent}
-  *{box-sizing:border-box} html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent} button,input{font:inherit} button{cursor:pointer}
+  *{box-sizing:border-box} [hidden]{display:none!important} html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent} button,input{font:inherit} button{cursor:pointer} button:disabled{opacity:.5;cursor:default}
   #stage{position:fixed;inset:0;display:flex;justify-content:flex-end;padding:20px 20px 20px 0;pointer-events:none}
   .panel{width:min(460px,calc(100vw - 30px));height:100%;max-height:820px;display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;border:1px solid rgba(211,232,219,.16);border-radius:20px;background:linear-gradient(148deg,rgba(31,38,34,.96),rgba(16,23,20,.96));box-shadow:0 28px 68px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
   header{display:flex;align-items:center;gap:9px;padding:17px 16px 12px;border-bottom:1px solid rgba(211,232,219,.09)}
   .live{width:7px;height:7px;border-radius:50%;background:#52d2a1;box-shadow:0 0 0 3px rgba(82,210,161,.1)} .brand{font-weight:750;font-size:14px;letter-spacing:-.025em}.retention{margin-left:auto;color:#b8c4bc;font-size:11px}.close{border:0;background:transparent;color:#aeb9b2;font-size:20px;line-height:1;padding:3px 0 3px 7px}
   .meter{display:flex;gap:3px;height:18px;align-items:end;padding:0 16px 13px;border-bottom:1px solid rgba(211,232,219,.09)}.meter span{flex:1;min-width:4px;border-radius:2px 2px 0 0;background:#4b695d}.meter span:nth-child(2n){height:45%}.meter span:nth-child(3n){height:70%}.meter span:nth-child(4n){height:35%}.meter span:nth-child(5n){height:85%}.meter span:nth-last-child(-n+4){background:#72d7a9}
-  .list-view,.review-view{display:flex;min-height:0;flex:1;flex-direction:column}.list-view[hidden],.review-view[hidden]{display:none}.section-label{display:flex;justify-content:space-between;padding:15px 16px 8px;color:#99a99f;font-size:10px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.section-label span:last-child{font-weight:500;letter-spacing:0;text-transform:none}
-  .events{padding:0 8px;overflow:auto}.event{width:100%;display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;padding:9px 8px;border:0;border-radius:10px;background:transparent;color:#eef2ef;text-align:left}.event:hover,.event:focus-visible{outline:0;background:rgba(132,181,154,.1)}.kind{display:grid;place-items:center;width:25px;height:25px;border:1px solid rgba(215,235,219,.1);border-radius:7px;background:#29342e;color:#a5d4bd;font-size:8px;font-weight:800}.kind.pdf{background:#432d2b;color:#f2b6ac}.kind.txt{background:#203c36;color:#9fdfcc}.kind.png{background:#493a22;color:#efd484}.kind.num{background:#244128;color:#a7d9aa}.event-name{min-width:0;font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.event-route{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;color:#b9c2bb;font-size:10px;line-height:1.35}.pill{padding:2px 4px;border-radius:4px;background:rgba(255,255,255,.05);color:#d0d7d1}.arrow{color:#62d6a6;font-weight:800}.age{padding-top:2px;color:#9ca99f;font-size:10px;white-space:nowrap}.event .flag{margin-left:4px;padding:2px 4px;border-radius:3px;background:#755323;color:#ffda86;font-size:8px;font-weight:800;letter-spacing:.05em}
+  .list-view,.review-view{display:flex;min-height:0;flex:1;flex-direction:column}.section-label{display:flex;justify-content:space-between;padding:15px 16px 8px;color:#99a99f;font-size:10px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.section-label span:last-child{font-weight:500;letter-spacing:0;text-transform:none}
+  .events{padding:0 8px;overflow:auto}.event{width:100%;display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;padding:9px 8px;border:0;border-radius:10px;background:transparent;color:#eef2ef;text-align:left}.event:hover,.event:focus-visible{outline:0;background:rgba(132,181,154,.1)}.kind{display:grid;place-items:center;width:25px;height:25px;border:1px solid rgba(215,235,219,.1);border-radius:7px;background:#29342e;color:#a5d4bd;font-size:8px;font-weight:800}.kind.pdf{background:#432d2b;color:#f2b6ac}.kind.txt{background:#203c36;color:#9fdfcc}.kind.png{background:#493a22;color:#efd484}.kind.num{background:#244128;color:#a7d9aa}.event-name{min-width:0;font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.event-route{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;color:#b9c2bb;font-size:10px;line-height:1.35}.pill{padding:2px 4px;border-radius:4px;background:rgba(255,255,255,.05);color:#d0d7d1}.arrow{color:#62d6a6;font-weight:800}.age{padding-top:2px;color:#9ca99f;font-size:10px;white-space:nowrap}.flag{display:inline-block;margin-left:4px;padding:2px 4px;border-radius:3px;background:#755323;color:#ffda86;font:800 8px -apple-system,BlinkMacSystemFont,sans-serif;letter-spacing:.05em;vertical-align:middle}
+  .why{margin-top:4px;color:#9fdcc0;font-size:10px;line-height:1.35}.empty{padding:18px 8px;color:#aab5ad;font-size:12px;line-height:1.4}.show-all{margin:4px 8px 8px;border:0;background:transparent;color:#72d7a9;font-size:11px;font-weight:700;text-align:left;padding:4px 0}
+  .notice{margin:0 16px 8px;padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.06);color:#d3dcd5;font-size:11px;line-height:1.4}.notice.warn{background:rgba(117,83,35,.35);color:#ffda86}.caveat{display:block;margin-top:6px;color:#c9d3cc;font-size:10px;font-weight:400}
   .privacy{margin:auto 16px 12px;color:#9ca99f;font-size:10px;line-height:1.35}.finder{padding:10px 12px 13px;border-top:1px solid rgba(211,232,219,.09);background:rgba(10,15,12,.16)}.query{display:flex;align-items:center;gap:8px;padding:5px 5px 5px 12px;border:1px solid rgba(207,230,215,.14);border-radius:11px;background:rgba(255,255,255,.055);box-shadow:inset 0 1px rgba(255,255,255,.04)}input{min-width:0;flex:1;border:0;outline:0;background:transparent;color:#eff5ef;font-size:12px}input::placeholder{color:#8d9b91}.find{border:0;border-radius:8px;padding:8px 13px;background:#10845b;color:#effff8;font-size:12px;font-weight:800}.find:hover{background:#14a06c}.hint{margin:7px 3px 0;color:#9ca99f;font-size:10px}
-  .review-head{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid rgba(211,232,219,.09)}.back{border:0;background:transparent;color:#d2ddd5;font-size:18px;padding:0}.review-title{font-size:14px;font-weight:750;letter-spacing:-.02em}.recorded{margin-left:auto;border-radius:999px;padding:4px 8px;background:#dbeee9;color:#176549;font-size:10px;font-weight:750}.review-scroll{overflow:auto;padding:12px 16px 16px}.card{margin-bottom:10px;padding:12px;border:1px solid rgba(208,231,215,.1);border-radius:12px;background:rgba(9,15,11,.18)}.card-title{margin-bottom:10px;color:#a3b0a7;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.journey{position:relative;padding-left:18px}.journey:before{position:absolute;top:7px;bottom:7px;left:4px;width:1px;background:#69d7a8;content:""}.journey-item{position:relative;padding:0 0 14px}.journey-item:last-child{padding-bottom:0}.journey-item:before{position:absolute;left:-17px;top:3px;width:7px;height:7px;border:2px solid #69d7a8;border-radius:50%;background:#19362b;content:""}.journey-time{color:#9daaa2;font-size:9px;font-weight:750;letter-spacing:.07em}.journey-place{margin-top:3px;font-size:12px;font-weight:750}.journey-detail{margin-top:3px;color:#aab5ad;font-size:10px;line-height:1.35}.reason{display:grid;gap:7px;font-size:10px;line-height:1.35}.reason div{display:grid;grid-template-columns:54px 1fr;gap:7px}.reason b{color:#6fd2a6;font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace}.approval{border-color:rgba(105,215,168,.48);background:rgba(36,87,64,.16)}.field-label{margin:10px 0 4px;color:#a7b5aa;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.field{padding:9px;border:1px solid rgba(211,232,219,.1);border-radius:7px;background:rgba(255,255,255,.06);font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.field small{display:block;margin-top:5px;color:#a2aea6;font:10px -apple-system,BlinkMacSystemFont,sans-serif}.approval-copy{margin:11px 0 0;color:#b7c0b9;font-size:10px;line-height:1.4}.approve-row{display:flex;gap:10px;align-items:center;margin-top:13px}.approve{border:0;border-radius:999px;padding:10px 16px;background:#10845b;color:#effff8;font-size:12px;font-weight:800}.cancel{border:0;background:transparent;color:#ecf2ed;font-size:12px;font-weight:750}.receipt{display:none;margin-top:12px;padding:9px;border-radius:8px;background:rgba(48,145,100,.2);color:#a9e7c5;font-size:10px;font-weight:700}.receipt.show{display:block}
+  .review-head{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid rgba(211,232,219,.09)}.back{border:0;background:transparent;color:#d2ddd5;font-size:18px;padding:0}.review-title{font-size:14px;font-weight:750;letter-spacing:-.02em}.recorded{margin-left:auto;border-radius:999px;padding:4px 8px;background:#dbeee9;color:#176549;font-size:10px;font-weight:750}.review-scroll{overflow:auto;padding:12px 16px 16px}.card{margin-bottom:10px;padding:12px;border:1px solid rgba(208,231,215,.1);border-radius:12px;background:rgba(9,15,11,.18)}.card-title{margin-bottom:10px;color:#a3b0a7;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.journey{position:relative;padding-left:18px}.journey:before{position:absolute;top:7px;bottom:7px;left:4px;width:1px;background:#69d7a8;content:""}.journey-item{position:relative;padding:0 0 14px}.journey-item:last-child{padding-bottom:0}.journey-item:before{position:absolute;left:-17px;top:3px;width:7px;height:7px;border:2px solid #69d7a8;border-radius:50%;background:#19362b;content:""}.journey-item.gap:before{border-color:#8a7a52;background:transparent;border-style:dashed}.journey-time{color:#9daaa2;font-size:9px;font-weight:750;letter-spacing:.07em}.journey-place{margin-top:3px;font-size:12px;font-weight:750;overflow-wrap:anywhere}.journey-detail{margin-top:3px;color:#aab5ad;font-size:10px;line-height:1.35;overflow-wrap:anywhere}.journey-item.gap .journey-detail{color:#e7c77f}.reason{display:grid;gap:7px;font-size:11px;line-height:1.4;overflow-wrap:anywhere}.pins{display:grid;gap:6px;margin-top:10px}.pin{display:grid;grid-template-columns:58px 1fr;gap:7px;font-size:10px;line-height:1.35;overflow-wrap:anywhere}.pin b{color:#6fd2a6;font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace}.note{margin:10px 0 0;color:#a2aea6;font-size:10px;line-height:1.35}.approval{border-color:rgba(105,215,168,.48);background:rgba(36,87,64,.16)}.field-label{margin:10px 0 4px;color:#a7b5aa;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.field{padding:9px;border:1px solid rgba(211,232,219,.1);border-radius:7px;background:rgba(255,255,255,.06);font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.field small{display:block;margin-top:5px;color:#a2aea6;font:10px -apple-system,BlinkMacSystemFont,sans-serif}.approval-copy{margin:11px 0 0;color:#b7c0b9;font-size:10px;line-height:1.4}.approve-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:13px}.approve{border:0;border-radius:999px;padding:10px 16px;background:#10845b;color:#effff8;font-size:12px;font-weight:800}.secondary{border:1px solid rgba(105,215,168,.48);border-radius:999px;padding:9px 14px;background:transparent;color:#bdf0d5;font-size:12px;font-weight:800;overflow-wrap:anywhere;text-align:left}.cancel{border:0;background:transparent;color:#ecf2ed;font-size:12px;font-weight:750}.receipt{display:none;margin-top:12px;padding:9px;border-radius:8px;font-size:11px;font-weight:700;line-height:1.4;overflow-wrap:anywhere}.receipt.show{display:block}.receipt.ok{background:rgba(48,145,100,.2);color:#a9e7c5}.receipt.warn{background:rgba(117,83,35,.35);color:#ffda86}.receipt.bad{background:rgba(140,50,45,.4);color:#ffb4a8}
+  details summary{margin-top:10px;color:#72d7a9;font-size:11px;font-weight:700;cursor:pointer}pre.payload{max-height:220px;overflow:auto;margin:8px 0 0;padding:9px;border-radius:7px;background:rgba(0,0,0,.25);color:#cfe0d5;font:10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere}ul.not-sent{margin:0;padding-left:16px;color:#d0d7d1;font-size:11px;line-height:1.6}
 </style></head><body>
 <main id="stage"><section class="panel" aria-label="Mac Do Over"><header><span class="live"></span><span class="brand">Mac Do Over</span><span class="retention">60 s frames · 10 min events</span><button class="close" id="close" aria-label="Close">×</button></header><div class="meter" aria-label="Recent recording buffer"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-<section class="list-view" id="list-view"><div class="section-label"><span>Recent changes</span><span>6 recorded</span></div><div class="events" id="events"></div><p class="privacy">Events older than 10 minutes are dropped from memory. Nothing is written to disk.</p><form class="finder" id="finder"><div class="query"><input id="request" aria-label="Describe what you lost" placeholder="Describe what you lost (optional)"><button class="find" type="submit">Find</button></div><p class="hint">Typing is optional. The list above needs no network and no model.</p></form></section>
-<section class="review-view" id="review-view" hidden><div class="review-head"><button class="back" id="back" aria-label="Back to changes">←</button><span class="review-title">One move fits</span><span class="recorded">Recorded on device</span></div><div class="review-scroll"><section class="card"><div class="card-title">Recorded journey</div><div class="journey"><div class="journey-item"><div class="journey-time">SOURCE · 14:22:03</div><div class="journey-place">Invoices, in Documents</div><div class="journey-detail">Last seen here by the file-event recorder.</div></div><div class="journey-item"><div class="journey-time">DESTINATION · 14:22:03</div><div class="journey-place">tmp, in Desktop</div><div class="journey-detail">Present now. Size and modified time unchanged.</div></div></div></section><section class="card"><div class="card-title">Why this one</div><div class="reason"><div><b>14:22:03</b><span>Only file move in the 60 seconds before Safari came forward.</span></div><div><b>14:22:44</b><span>Frame shows Safari frontmost — 41 seconds after the move.</span></div></div></section><section class="card approval"><div class="card-title">Approve this put-back</div><div class="field-label">File name</div><div class="field">Q3-invoice-register.pdf</div><div class="field-label">From (source folder)</div><div class="field">tmp, in Desktop<small>Macintosh HD › Users › ada › Desktop › tmp</small></div><div class="field-label">To (destination folder)</div><div class="field">Invoices, in Documents<small>Macintosh HD › Users › ada › Documents › Invoices</small></div><p class="approval-copy">This moves one file. Nothing else on this list is touched, and nothing at the destination is replaced.</p><div class="approve-row"><button class="approve" id="approve">Move this one file back</button><button class="cancel" id="cancel">Cancel</button></div><div class="receipt" id="receipt" role="status">Approved in mock mode — no file was changed.</div></section></div></section></section></main>
+
+<section class="list-view" id="list-view">
+  <div class="section-label"><span id="list-label">Recent changes</span><span id="list-count"></span></div>
+  <div class="notice" id="list-notice" role="status" hidden></div>
+  <div class="events" id="events"></div>
+  <p class="privacy">Events are kept in memory for 10 minutes, then dropped. No intentional local persistence.</p>
+  <form class="finder" id="finder"><div class="query"><input id="request" maxlength="200" autocomplete="off" spellcheck="false" aria-label="Describe what you lost" placeholder="Describe what you lost (optional)"><button class="find" id="find" type="submit">Find</button></div><p class="hint">Typing is optional. The list above needs no network and no model.</p></form>
+</section>
+
+<section class="review-view" id="consent-view" hidden>
+  <div class="review-head"><button class="back" id="consent-back" aria-label="Back to changes">←</button><span class="review-title">Before anything is sent</span><span class="recorded">Your choice</span></div>
+  <div class="review-scroll">
+    <section class="card approval"><div class="card-title">Sent only if you press Send</div>
+      <div class="field" id="consent-summary"></div>
+      <div class="field-label">Your sentence</div><div class="field" id="consent-reference"></div>
+      <details id="consent-details"><summary>See exactly what is sent</summary><pre class="payload" id="consent-payload"></pre></details>
+      <p class="approval-copy" id="consent-policy"></p>
+    </section>
+    <section class="card"><div class="card-title">Not sent - stays on this Mac</div><ul class="not-sent" id="consent-not-sent"></ul><p class="note">Window titles in the timeline are sent as they appear. Open "See exactly what is sent" to check them.</p></section>
+    <div class="approve-row"><button class="approve" id="send" type="button">Send</button><button class="cancel" id="consent-cancel" type="button">Cancel</button></div>
+    <div class="receipt" id="consent-status" role="status"></div>
+  </div>
+</section>
+
+<section class="review-view" id="review-view" hidden>
+  <div class="review-head"><button class="back" id="back" aria-label="Back to changes">←</button><span class="review-title" id="review-title">Put this file back</span><span class="recorded">Recorded on device</span></div>
+  <div class="review-scroll">
+    <section class="card"><div class="card-title">Recorded journey</div><div class="journey" id="journey"></div></section>
+    <section class="card" id="why-card" hidden><div class="card-title">Why Find picked this</div><div class="reason" id="why"></div><div class="pins" id="pins"></div><p class="note">Suggested by OpenAI from the recorded events. Check it before you approve.</p></section>
+    <section class="card approval"><div class="card-title">Approve this put-back</div>
+      <div class="field-label">File name</div><div class="field" id="ap-name"></div>
+      <div class="field-label">From (where it is now)</div><div class="field" id="ap-from"></div>
+      <div class="field-label">To (where it goes back)</div><div class="field" id="ap-to"></div>
+      <p class="approval-copy">This moves one file. Nothing else on this list is touched, and nothing at the destination is replaced.</p>
+      <div class="approve-row"><button class="approve" id="approve" type="button">Move this one file back</button><button class="secondary" id="recovered" type="button" hidden></button><button class="cancel" id="cancel" type="button">Cancel</button></div>
+      <div class="receipt" id="receipt" role="status"></div>
+    </section>
+  </div>
+</section>
+</section></main>
 <script>
-  const events=[
-    {kind:'PDF',style:'pdf',name:'Q3-invoice-register.pdf',from:'Invoices, in Documents',to:'tmp, in Desktop',age:'12 s'},
-    {kind:'TXT',style:'txt',name:'txt.み済用便−(2)ypoc-4v-lanif-LANIF-…',from:'Downloads',to:'2026, in Documents',age:'41 s',flag:'BIDI HELD'},
-    {kind:'MD',style:'',name:'reconciliation-notes.md',from:'Desktop',to:'renamed to notes-old.md',age:'1 m 20 s'},
-    {kind:'PNG',style:'png',name:'Screenshot 2026-09-09 at 14.21.44.png',from:'Desktop',to:'Bin',age:'2 m 05 s'},
-    {kind:'NUM',style:'num',name:'rotation-budget.numbers',from:'Numbers, in iCloud Drive',to:'tmp, in Desktop',age:'4 m 12 s'},
-    {kind:'HEIC',style:'',name:'IMG_0421.HEIC',from:'Downloads',to:'Photos Library',age:'7 m 48 s'}
-  ];
-  const list=document.getElementById('events'); const listView=document.getElementById('list-view'); const reviewView=document.getElementById('review-view');
-  function openReview(){listView.hidden=true;reviewView.hidden=false} function openList(){reviewView.hidden=true;listView.hidden=false}
-  events.forEach(event=>{const row=document.createElement('button');row.type='button';row.className='event';const icon=document.createElement('span');icon.className='kind '+event.style;icon.textContent=event.kind;const copy=document.createElement('span');const name=document.createElement('div');name.className='event-name';name.textContent=event.name;const route=document.createElement('div');route.className='event-route';const from=document.createElement('span');from.className='pill';from.textContent=event.from;const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='→';const to=document.createElement('span');to.className='pill';to.textContent=event.to;route.append(from,arrow,to);if(event.flag){const flag=document.createElement('span');flag.className='flag';flag.textContent=event.flag;route.append(flag)}copy.append(name,route);const age=document.createElement('span');age.className='age';age.textContent=event.age;row.append(icon,copy,age);row.addEventListener('click',openReview);list.append(row)});
-  document.getElementById('finder').addEventListener('submit',event=>{event.preventDefault();openReview()});document.getElementById('back').addEventListener('click',openList);document.getElementById('close').addEventListener('click',()=>window.overlay.hide());document.getElementById('cancel').addEventListener('click',openList);document.getElementById('approve').addEventListener('click',()=>document.getElementById('receipt').classList.add('show'));addEventListener('keydown',event=>{if(event.key==='Escape')window.overlay.hide()});
+'use strict';
+// Shapes: src/shared/types.ts. Main re-validates every argument; this page only renders and asks.
+const api = window.macDoOver;
+const $ = (id) => document.getElementById(id);
+const views = { list: $('list-view'), consent: $('consent-view'), review: $('review-view') };
+const TRASH = '~/.Trash';
+const state = { snap: null, matches: null, candidate: null, match: null, sheet: null, preview: null, reference: '', busy: false, done: false, halted: false };
+
+// Filenames, folder names, window titles and model text are untrusted. They are only ever set as
+// text, and invisible direction or control characters are shown as visible codes instead of acting.
+const INVISIBLE = new RegExp('[' + [[0x00, 0x1F], [0x7F, 0x9F], [0xAD], [0x061C], [0x115F, 0x1160], [0x180E], [0x200B, 0x200F], [0x2028, 0x2029], [0x202A, 0x202E], [0x2060, 0x2069], [0x3164], [0xFEFF], [0xFFA0]].map(([a, b]) => String.fromCharCode(a) + (b ? '-' + String.fromCharCode(b) : '')).join('') + ']', 'g');
+const visible = (s) => String(s ?? '').replace(INVISIBLE, (c) => '[U+' + c.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0') + ']');
+const FLAG_LABEL = { bidi: 'BIDI HELD', control: 'CONTROL HELD', newline: 'NEWLINE HELD', markup: 'MARKUP HELD' };
+
+function el(tag, cls, text) { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; }
+function flags(list) { return (Array.isArray(list) ? list : []).map((f) => el('span', 'flag', FLAG_LABEL[f] || 'CHECK NAME')); }
+
+/** "~/Documents/Invoices" -> "Invoices, in Documents". Display paths only; absolute paths never reach this page. */
+function place(p) {
+  if (p === TRASH) return 'Bin';
+  const parts = String(p ?? '').replace(/^~\/?/, '').split('/').filter(Boolean).map(visible);
+  if (!parts.length) return 'Home';
+  return parts.length === 1 ? parts[0] : `${parts[parts.length - 1]}, in ${parts[parts.length - 2]}`;
+}
+function kindOf(name) {
+  const m = /\.([A-Za-z0-9]{1,8})$/.exec(String(name)); const ext = m ? m[1].toLowerCase() : '';
+  const style = ext === 'pdf' ? 'pdf' : ['txt', 'md', 'rtf', 'doc', 'docx', 'pages'].includes(ext) ? 'txt'
+    : ['png', 'jpg', 'jpeg', 'heic', 'gif', 'webp'].includes(ext) ? 'png' : ['numbers', 'xlsx', 'xls', 'csv'].includes(ext) ? 'num' : '';
+  return { label: ext ? ext.slice(0, 4).toUpperCase() : 'FILE', style };
+}
+function age(ts) {
+  const s = Math.max(0, Math.round((Date.now() - ts) / 1000)); if (s < 60) return `${s} s`;
+  const m = Math.floor(s / 60); return m < 10 ? `${m} m ${String(s % 60).padStart(2, '0')} s` : `${m} m`;
+}
+const clock = (ts) => new Date(ts).toLocaleTimeString('en-GB', { hour12: false });
+function describe(e) {
+  switch (e.kind) {
+    case 'file.move':
+      if (e.to === TRASH) return `${visible(e.name)} sent to the Bin from ${place(e.from)}`;
+      if (e.from === TRASH) return `${visible(e.name)} taken out of the Bin into ${place(e.to)}`;
+      return `${visible(e.name)} moved from ${place(e.from)} to ${place(e.to)}`;
+    case 'file.rename': return `${visible(e.name)} renamed to ${visible(e.newName)} in ${place(e.dir)}`;
+    case 'window.front': return `${visible(e.appName)} came to the front` + (e.title ? ` - "${visible(String(e.title).slice(0, 60))}"` : '');
+    default: return 'Recorded event';
+  }
+}
+
+function show(name) { state.shownAt = Date.now(); for (const [k, v] of Object.entries(views)) v.hidden = k !== name; }
+/** A second click of a double-click, or a click landing as a new view appears, is not a deliberate approval. */
+const deliberate = (e) => !e || (e.detail <= 1 && Date.now() - (state.shownAt || 0) >= 400);
+function notice(text, warn, notes) {
+  const n = $('list-notice'); n.hidden = !text; n.textContent = text || ''; n.classList.toggle('warn', !!warn);
+  // Model text is labelled as the model's, never shown in the app's own voice.
+  if (text && Array.isArray(notes) && notes.length) n.append(el('span', 'caveat', `Find notes (from OpenAI): ${notes.map(visible).join(' ')}`));
+}
+function receipt(node, text, tone) { node.textContent = text || ''; node.className = 'receipt' + (text ? ` show ${tone}` : ''); }
+
+// ---- List ------------------------------------------------------------------------------------
+
+async function refresh(message, warn) {
+  if (state.busy) return;
+  state.busy = true;
+  Object.assign(state, { matches: null, candidate: null, match: null, sheet: null, preview: null, done: false });
+  let snap = null;
+  try { snap = api ? await api.snapshot() : null; } catch { snap = null; }
+  state.snap = snap; state.busy = false;
+  show('list'); renderList();
+  if (message) notice(message, warn);
+  else if (!snap) notice('Mac Do Over is still starting. Open it again in a moment.', true);
+  else if (state.halted) notice('Stopped after an incident, so nothing more will be moved until Mac Do Over restarts.', true);
+  else notice('');
+}
+
+function renderList() {
+  const box = $('events'); box.replaceChildren();
+  const snap = state.snap;
+  const all = snap ? snap.candidates.slice().sort((a, b) => b.observedAt - a.observedAt) : [];
+  const byMatch = new Map((state.matches || []).map((m) => [m.candidateId, m]));
+  const rows = state.matches ? all.filter((c) => byMatch.has(c.id)) : all;
+  $('list-label').textContent = state.matches ? 'Find suggests' : 'Recent changes';
+  $('list-count').textContent = !snap ? '' : state.matches ? `${rows.length} of ${all.length}` : `${all.length} recorded`;
+  if (snap && !rows.length) box.append(el('div', 'empty', 'Nothing to put back from the last ten minutes.'));
+  for (const c of rows) {
+    const match = byMatch.get(c.id) || null;
+    const row = el('button', 'event'); row.type = 'button';
+    const k = kindOf(c.name);
+    const copy = el('span');
+    const route = el('div', 'event-route');
+    // The move as it happened: where the file was, then where it is now.
+    route.append(el('span', 'pill', place(c.to)), el('span', 'arrow', '→'), el('span', 'pill', place(c.from)), ...flags(c.nameFlags));
+    copy.append(el('div', 'event-name', visible(c.name)), route);
+    if (match) copy.append(el('div', 'why', `Find: ${visible(match.why)}`));
+    row.append(el('span', `kind ${k.style}`, k.label), copy, el('span', 'age', age(c.observedAt)));
+    row.addEventListener('click', () => openReview(c, match, state.matches ? 'You picked this one' : 'Put this file back'));
+    box.append(row);
+  }
+  if (state.matches) {
+    const all = el('button', 'show-all', 'Show all changes'); all.type = 'button';
+    all.addEventListener('click', () => { state.matches = null; notice(''); renderList(); });
+    box.append(all);
+  }
+}
+
+function backToList() {
+  if (state.busy) return;
+  if (state.done) { $('request').value = ''; void refresh(); return; }
+  show('list'); renderList();
+}
+
+// ---- Review and approval ---------------------------------------------------------------------
+
+async function openReview(c, match, title) {
+  if (state.busy || !state.snap) return;
+  state.busy = true;
+  let sheet = null;
+  try { sheet = await api.openApproval(state.snap.snapshotId, c.id); } catch { sheet = null; }
+  state.busy = false;
+  if (!sheet) { await refresh('That change is no longer in memory, so the list has been refreshed.', true); return; }
+  Object.assign(state, { candidate: c, match: match || null, sheet, done: false });
+  $('review-title').textContent = title;
+  renderJourney(c); renderWhy(match); renderSheet(sheet);
+  show('review');
+  $('review-view').querySelector('.review-scroll').scrollTop = 0;
+}
+
+function journeyItem(box, time, text, cls, strong) {
+  const n = el('div', `journey-item ${cls || ''}`);
+  if (time) n.append(el('div', 'journey-time', time));
+  n.append(el('div', strong ? 'journey-place' : 'journey-detail', text));
+  box.append(n);
+}
+function renderJourney(c) {
+  const box = $('journey'); box.replaceChildren();
+  const near = (state.snap.events || []).filter((e) => Math.abs(e.ts - c.observedAt) <= 90_000);
+  if (!near.some((e) => e.id === c.eventId)) near.push({ id: c.eventId, ts: c.observedAt, kind: 'file.move', name: c.name, from: c.to, to: c.from });
+  near.sort((a, b) => a.ts - b.ts);
+  let prev = null;
+  for (const e of near) {
+    if (prev !== null && e.ts - prev >= 20_000) {
+      journeyItem(box, '', `${Math.round((e.ts - prev) / 1000)} s with nothing recorded - Mac Do Over does not guess what happened here.`, 'gap');
+    }
+    const label = e.id === c.eventId ? 'THIS MOVE' : e.kind === 'window.front' ? 'APP' : e.kind === 'file.rename' ? 'RENAME' : 'OTHER MOVE';
+    journeyItem(box, `${label} · ${clock(e.ts)}`, describe(e), '', e.id === c.eventId);
+    prev = e.ts;
+  }
+}
+function renderWhy(match) {
+  $('why-card').hidden = !match;
+  if (!match) return;
+  $('why').replaceChildren(el('div', '', visible(match.why)));
+  const byId = new Map((state.snap.events || []).map((e) => [e.id, e]));
+  const pins = $('pins'); pins.replaceChildren();
+  for (const id of match.evidenceEventIds || []) {
+    const e = byId.get(id); if (!e) continue;
+    const pin = el('div', 'pin'); pin.append(el('b', '', clock(e.ts)), el('span', '', describe(e))); pins.append(pin);
+  }
+}
+function setField(id, main, small, extra) {
+  const f = $(id); f.replaceChildren(document.createTextNode(main), ...(extra || []));
+  if (small) f.append(el('small', '', small));
+}
+function renderSheet(sheet) {
+  const held = Array.isArray(sheet.nameFlags) && sheet.nameFlags.length;
+  setField('ap-name', visible(sheet.name), held ? 'Hidden direction and control characters in this name are shown as codes.' : '', flags(sheet.nameFlags));
+  setField('ap-from', place(sheet.from), sheet.from === TRASH ? '' : visible(sheet.from));
+  setField('ap-to', place(sheet.to), visible(sheet.to));
+  const approve = $('approve'); approve.hidden = false; approve.disabled = state.halted;
+  $('cancel').textContent = 'Cancel';
+  const rec = $('recovered'); rec.hidden = true; rec.disabled = state.halted;
+  if (state.halted) receipt($('receipt'), 'Stopped after an incident, so nothing more will be moved until Mac Do Over restarts.', 'bad');
+  else if (sheet.destinationOccupied) {
+    receipt($('receipt'), `${place(sheet.to)} already has a file called ${visible(sheet.name)}. Mac Do Over will not replace it.`, 'warn');
+    offerRecovered(sheet);
+  } else receipt($('receipt'), '', '');
+}
+function offerRecovered(sheet) {
+  if (!sheet || !sheet.recoveredName) return;
+  const rec = $('recovered'); rec.textContent = `Put back as ${visible(sheet.recoveredName)}`; rec.hidden = false; rec.disabled = state.halted;
+}
+
+async function restore(mode) {
+  if (state.busy || state.halted || !state.candidate || !state.snap) return;
+  const candidate = state.candidate;
+  state.busy = true; $('approve').disabled = true; $('recovered').disabled = true;
+  let result;
+  try {
+    let sheet = state.sheet;
+    // A token is single-use and expires. After any attempt, or near expiry, the press asks main for a fresh one for this same candidate.
+    if (!sheet || sheet.used || Date.now() > sheet.expiresAt - 5000) { sheet = await api.openApproval(state.snap.snapshotId, candidate.id); state.sheet = sheet; }
+    if (!sheet) result = { status: 'refused', reason: 'unknown_candidate', message: 'This change is no longer in memory. Nothing was changed.' };
+    else { sheet.used = true; result = await api.restore(candidate.id, sheet.token, mode); }
+  } catch {
+    result = { status: 'unknown' };
+  }
+  state.busy = false;
+  if (state.candidate !== candidate) return;
+  showResult(result, mode);
+}
+
+async function showResult(r, mode) {
+  const box = $('receipt'), approve = $('approve'), rec = $('recovered');
+  requestAnimationFrame(() => box.scrollIntoView({ block: 'nearest' }));   // the outcome must be on screen, not below the fold
+  if (r && r.status === 'restored' && r.candidateId === state.candidate.id) {
+    state.done = true;
+    receipt(box, `Put back and checked afterwards - it is the file that was recorded. ${visible(r.name)} is back in ${place(r.to)}.`, 'ok');
+    approve.hidden = true; rec.hidden = true; $('cancel').textContent = 'Done';
+    return;
+  }
+  if (r && r.status === 'incident') {
+    state.halted = true;
+    receipt(box, visible(r.message), 'bad');
+    approve.disabled = true; rec.hidden = true;
+    return;
+  }
+  if (!r || r.status !== 'refused') {
+    receipt(box, 'Mac Do Over could not confirm what happened. Go back to the list to check before trying again.', 'bad');
+    approve.disabled = true; rec.disabled = true; state.done = true;
+    return;
+  }
+  receipt(box, visible(r.message), 'warn');
+  if (r.reason === 'halted') { state.halted = true; approve.disabled = true; rec.hidden = true; return; }
+  // Only refusals a second press could change re-enable the buttons; the rest would just refuse again.
+  const retryable = ['token_expired', 'token_invalid', 'destination_occupied'].includes(r.reason);
+  approve.disabled = !retryable; rec.disabled = !retryable;
+  if (!retryable) rec.hidden = true;
+  if (r.reason === 'destination_occupied' && mode === 'original') {
+    // Learn the free "(recovered)" name from a fresh sheet; nothing moves until the user presses it.
+    const candidate = state.candidate;
+    let sheet = null;
+    state.busy = true;
+    try { sheet = await api.openApproval(state.snap.snapshotId, candidate.id); } catch { sheet = null; }
+    state.busy = false;
+    if (state.candidate !== candidate || state.done || !sheet) return;
+    state.sheet = sheet;
+    if (sheet.recoveredName) offerRecovered(sheet);
+    else rec.hidden = true;
+  }
+}
+
+// ---- Find ------------------------------------------------------------------------------------
+
+async function startFind(ev) {
+  ev.preventDefault();
+  if (state.busy) return;
+  const reference = $('request').value.replace(/\s+/g, ' ').trim();
+  if (!reference) { notice('Type a few words about the file, or pick it from the list.'); return; }
+  if (!state.snap) { await refresh(); if (!state.snap) return; }
+  state.busy = true;
+  let preview = null;
+  try { preview = await api.findPreview(state.snap.snapshotId, reference); } catch { preview = null; }
+  state.busy = false;
+  if (!preview) { await refresh('The list was out of date, so it has been refreshed. Try Find again.', true); return; }
+  Object.assign(state, { preview, reference });
+  $('consent-summary').textContent = `${preview.eventCount} recorded events, ${preview.candidateCount} changes and your sentence - ${preview.bytes} bytes.`;
+  $('consent-reference').textContent = visible(preview.payload.reference);
+  $('consent-payload').textContent = visible(JSON.stringify(preview.payload, null, 2));
+  $('consent-details').open = false;
+  $('consent-policy').textContent = `Sent to ${preview.provider} (${preview.model}) under their API policy, only when you press Send.`;
+  $('consent-not-sent').replaceChildren(...(preview.notSent || []).map((t) => el('li', '', t)));
+  receipt($('consent-status'), '', '');
+  $('send').disabled = false;
+  show('consent');
+}
+
+async function sendFind() {
+  if (state.busy || !state.preview || !state.snap) return;
+  const snap = state.snap;
+  state.busy = true; $('send').disabled = true;
+  receipt($('consent-status'), 'Sending...', 'ok');
+  let r;
+  try { r = await api.findSend(state.preview.snapshotId, state.reference); } catch { r = { status: 'error', reason: '' }; }
+  state.busy = false;
+  if (state.snap !== snap || views.consent.hidden) return;
+  const byId = new Map(snap.candidates.map((c) => [c.id, c]));
+  if (r && r.status === 'matched') {
+    const matches = (r.matches || []).filter((m) => byId.has(m.candidateId));
+    if (matches.length === 1) { state.matches = null; await openReview(byId.get(matches[0].candidateId), matches[0], 'One change fits'); return; }
+    if (matches.length > 1) { state.matches = matches; show('list'); renderList(); notice(`${matches.length} changes fit. Pick the one you mean.`, false, r.caveats); return; }
+  }
+  state.matches = null; show('list'); renderList();
+  const status = r && r.status;
+  if (status === 'matched' || status === 'no_match') notice('Find did not match a change from the last ten minutes. Pick from the list instead.', false, r.caveats);
+  else if (status === 'invalid') notice('Find gave an answer that does not fit what was recorded, so it is not shown. Pick from the list instead.', true);
+  else if (status === 'offline') notice('No connection, so Find cannot run. The list works without it.', true);
+  else if (status === 'timeout') notice('Find took too long. The list works without it.', true);
+  else notice(`Find could not run${r && r.reason ? ': ' + visible(r.reason) : '.'} The list works without it.`, true);
+}
+
+// ---- Wiring ----------------------------------------------------------------------------------
+
+$('finder').addEventListener('submit', startFind);
+$('send').addEventListener('click', (e) => { if (deliberate(e)) void sendFind(); });
+$('consent-back').addEventListener('click', () => { if (!state.busy) { show('list'); renderList(); } });
+$('consent-cancel').addEventListener('click', () => { if (!state.busy) { show('list'); renderList(); } });
+$('approve').addEventListener('click', (e) => { if (deliberate(e)) void restore('original'); });
+$('recovered').addEventListener('click', (e) => { if (deliberate(e)) void restore('recovered'); });
+$('back').addEventListener('click', backToList);
+$('cancel').addEventListener('click', backToList);
+$('close').addEventListener('click', () => window.overlay.hide());
+addEventListener('keydown', (e) => { if (e.key === 'Escape') window.overlay.hide(); });
+// Every time the overlay is opened again, freeze a fresh snapshot. A visibility or focus blip shorter
+// than REOPEN_MS must not wipe a review or a Find the user is in the middle of, or swallow their click.
+const REOPEN_MS = 1500;
+function whenIdle(fn, tries = 40) { if (!state.busy) { void fn(); return; } if (tries > 0) setTimeout(() => whenIdle(fn, tries - 1), 250); }
+let hiddenAt = 0, lastRefresh = 0;
+function refreshNow() { lastRefresh = Date.now(); return refresh(); }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') { hiddenAt = Date.now(); return; }
+  if (hiddenAt && Date.now() - hiddenAt >= REOPEN_MS) { hiddenAt = 0; $('request').value = ''; whenIdle(refreshNow); }
+});
+// Fallback in case a show arrives without a visibility change: only on the plain list, never mid-flow.
+addEventListener('focus', () => { if (!views.list.hidden && !state.matches && !state.busy && Date.now() - lastRefresh >= REOPEN_MS) void refreshNow(); });
+void refreshNow();
 </script></body></html>
