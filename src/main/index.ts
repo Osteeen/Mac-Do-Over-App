@@ -12,6 +12,10 @@ import type { PermissionPane } from '../shared/channels.js';
 import { watchRoots, describeRoots } from './config.js';
 import { Journal } from './journal/journal.js';
 import { startMoveDetector, type MoveDetector } from './journal/move-detector.js';
+import { Executor } from './executor/executor.js';
+import { buildPreview } from './find/payload.js';
+import { runFind } from './find/find.js';
+import type { RestoreRequest, RestoreResult, StripSnapshot } from '../shared/types.js';
 
 const args = process.argv.slice(1);
 const gateArg = args.find(a => a.startsWith('--gate='))?.split('=')[1];
@@ -24,6 +28,16 @@ let onboarding: BrowserWindow | null = null;
 let overlayOpen = false;
 let journal: Journal | null = null;
 let detector: MoveDetector | null = null;
+let executor: Executor | null = null;
+/** The last few frozen snapshots, so Find and approval act on exactly what the user was shown. */
+const snapshots = new Map<string, StripSnapshot>();
+function remember(s: StripSnapshot): StripSnapshot {
+  snapshots.set(s.snapshotId, s);
+  for (const id of [...snapshots.keys()].slice(0, -5)) snapshots.delete(id);
+  return s;
+}
+/** Renderer arguments are untrusted: strings only, bounded length. */
+const arg = (v: unknown, max: number): string | null => (typeof v === 'string' && v.length <= max ? v : null);
 
 function toggleOverlay(): void {
   if (!overlay) return;
@@ -66,6 +80,26 @@ function registerIpc(): void {
   handle('overlay:hide', () => { if (overlay) { overlayOpen = false; overlay.setIgnoreMouseEvents(true, { forward: true }); overlay.hide(); } return true; });
   handle('edge:activated', () => { if (!overlayOpen) toggleOverlay(); return true; });
   handle('app:info', () => ({ name: app.getName(), version: app.getVersion(), packaged: app.isPackaged, electron: process.versions.electron, node: process.versions.node }));
+  handle('strip:snapshot', () => (journal ? remember(journal.freeze()) : null));
+  handle<[unknown, unknown]>('find:preview', (_e, sid, ref) => {
+    const s = snapshots.get(arg(sid, 32) ?? '');
+    return s ? buildPreview(s, arg(ref, 2000) ?? '') : null;
+  });
+  handle<[unknown, unknown]>('find:send', async (_e, sid, ref) => {
+    const s = snapshots.get(arg(sid, 32) ?? '');
+    if (!s) return { status: 'error', reason: 'This list is out of date. Open it again.' };
+    return runFind(s, arg(ref, 2000) ?? '');
+  });
+  handle<[unknown, unknown]>('approval:open', (_e, sid, cid) => {
+    const s = arg(sid, 32), c = arg(cid, 32);
+    return executor && s && c ? executor.openApproval(s, c) : null;
+  });
+  handle<[unknown]>('restore:approve', async (_e, raw): Promise<RestoreResult> => {
+    const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const req: RestoreRequest = { candidateId: arg(r.candidateId, 32) ?? '', token: arg(r.token, 128) ?? '', mode: r.mode === 'recovered' ? 'recovered' : 'original' };
+    if (!executor) return { status: 'refused', candidateId: req.candidateId, reason: 'halted', message: 'Mac Do Over is still starting. Nothing was changed.' };
+    return executor.restore(req);
+  });
 }
 
 async function main(): Promise<void> {
@@ -165,6 +199,7 @@ async function main(): Promise<void> {
 
   journal = new Journal();
   const j = journal;
+  executor = new Executor(j);
   front.on('change', (e) => j.recordFront(e.ts, e.appName, e.title));
   detector = startMoveDetector(rootsCfg, j);
   detector.on('ready', (n) => console.log('[journal] watching, files indexed:', n));

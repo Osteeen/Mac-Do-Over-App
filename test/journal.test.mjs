@@ -29,6 +29,9 @@ async function sandbox(files) {
   const journal = new Journal();
   const det = startMoveDetector({ roots: [dir], trash: null, source: 'environment', warnings: [] }, journal);
   await new Promise((r) => det.once('ready', r));
+  // fs.watch can drop the very first change made the instant the watcher reports ready, most
+  // visibly when the whole suite is loading the machine. A person never moves a file that fast.
+  await wait(300);
   const p = (...s) => path.join(dir, ...s);
   return { p, journal, async done() { await det.close(); journal.dispose(); fs.rmSync(dir, { recursive: true, force: true }); } };
 }
