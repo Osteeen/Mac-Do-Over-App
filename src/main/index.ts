@@ -228,7 +228,9 @@ async function main(): Promise<void> {
   globalShortcut.register('Alt+CommandOrControl+Z', toggleOverlay);
   input.on('error', (e) => console.warn('[input sensor]', String(e)));
   front.on('error', (e) => console.warn('[window sensor]', String(e)));
-  void startInputSensor();
+  // The global keyboard and mouse hook feeds nothing the product uses (only the debug log below and the
+  // capture gate, which starts it itself), and waiting for it to stop is what hung quitting. Debug only.
+  if (process.env.STARTER_DEBUG) void startInputSensor();
   void startWindowSensor();
   // Sensor events are emitted, not stored: the starter has no journal. A product subscribes here.
   input.on('combo', (e) => { if (process.env.STARTER_DEBUG) console.log('[combo]', e.combo); });

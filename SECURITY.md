@@ -9,9 +9,10 @@ capability, so the boundaries are stated here rather than left implicit.
 disk by this code. macOS shows its own recording indicator whenever any app reads the screen; that
 indicator is not suppressed and should not be.
 
-**Input.** Only mouse events and modifier shortcuts are recorded. Key events without a real
-modifier are discarded before anything is stored, so ordinary typing, capital letters included, is
-never captured. Shift alone is not treated as a modifier, because Shift+A is a capital A.
+**Input.** Mac Do Over does not run the global keyboard and mouse sensor: it starts only when
+`STARTER_DEBUG` is set, for debugging, and in the capture gate. When it does run, only mouse events
+and Command shortcuts are passed on. Key events without Command are discarded before anything is
+stored, so ordinary typing, capital letters included, is never captured.
 
 **File moves.** The only operation that moves a file is `renameatx_np` with `RENAME_EXCL`: one
 syscall that fails if the destination exists. It cannot overwrite. It does **not** verify that the

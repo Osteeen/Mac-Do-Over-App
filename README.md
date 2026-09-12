@@ -115,7 +115,7 @@ All of this is in memory. Mac Do Over has no intentional local persistence of wh
 |---|---|---|
 | File move and rename events, front-app changes | 10 minutes | Swept once a minute. Candidates older than 10 minutes are no longer offered. |
 | Screen thumbnails | about 60 seconds | 2 per second at most, JPEG, capped at 240 frames. Captured only if Screen Recording is granted. Never sent anywhere. |
-| Typing | never captured | The input sensor only sees mouse clicks and a short list of Command shortcuts, and Mac Do Over stores neither. |
+| Typing, clicks, shortcuts | never captured | The global keyboard and mouse sensor does not run in Mac Do Over. It starts only for debugging (`STARTER_DEBUG`). |
 | Audio | never captured | There is no audio code. |
 
 macOS shows its own screen-recording indicator while the app runs. It is not suppressed.
@@ -147,10 +147,10 @@ what is being observed.
 
 Then:
 
-1. Grant **Screen Recording**, **Accessibility** and **Input Monitoring** when asked. Quit and
-   relaunch after granting Screen Recording; macOS applies it on the next launch. In a dev run the
-   grant goes to `node_modules/electron/dist/Electron.app`.
-2. Watching the Trash may also need **Full Disk Access**.
+1. Start it from Terminal. macOS applies permissions to the app you launch it from, so grant
+   **Screen Recording** and **Accessibility** to Terminal when asked, then quit Terminal and reopen it.
+2. Watching the Trash needs **Full Disk Access** for Terminal too. Without it the log shows
+   `EPERM ... .Trash` and trashed files cannot be put back; everything else still works.
 3. Move a file to another watched folder, or to the Trash, then press **Option+Command+Z**.
 
 Other scripts: `npm test` (addon, Keychain, security regression, journal, executor and Find tests), `npm run gate:recovery`
