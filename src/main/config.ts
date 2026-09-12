@@ -21,6 +21,17 @@ export interface WatchRoots {
 }
 
 const ENV = 'DESKTOP_AGENT_ROOTS';
+const DEPTH_ENV = 'DESKTOP_AGENT_DEPTH';
+
+/**
+ * How many folder levels below each root are watched. Every watched folder costs one watcher, and on
+ * macOS thousands of them stall: a Desktop full of code projects reached 4,190 folders at 6 levels,
+ * but 873 at 3, which open in milliseconds. Override with DESKTOP_AGENT_DEPTH, 1 to 6.
+ */
+export function watchDepth(): number {
+  const n = Number(process.env[DEPTH_ENV]);
+  return Number.isInteger(n) && n >= 1 && n <= 6 ? n : 3;
+}
 
 /** Resolve a path to its real location even when the leaf does not exist yet. */
 function resolveReal(p: string): string | null {
@@ -95,5 +106,5 @@ export function describeRoots(w: WatchRoots): string {
   const home = os.homedir();
   const short = (p: string) => (p.startsWith(home) ? '~' + p.slice(home.length) : p);
   const list = w.roots.map(short).join(', ') || 'nothing';
-  return `watching ${list}${w.trash ? ' and the Trash' : ''} (${w.source})`;
+  return `watching ${list}${w.trash ? ' and the Trash' : ''}, ${watchDepth()} levels deep (${w.source})`;
 }

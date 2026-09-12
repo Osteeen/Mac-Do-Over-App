@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { watch, type FSWatcher } from 'chokidar';
 import { LIMITS } from '../../shared/types.js';
-import type { WatchRoots } from '../config.js';
+import { watchDepth, type WatchRoots } from '../config.js';
 import { fileKey, type FileKey, type Journal } from './journal.js';
 
 function lstatBig(p: string): fs.BigIntStats | null {
@@ -43,7 +43,7 @@ export class MoveDetector extends EventEmitter {
     this.watcher = watch(targets, {
       ignoreInitial: false,
       followSymlinks: false,
-      depth: 6,
+      depth: watchDepth(),
       atomic: true,
       ignored: (p: string) => ignored(p, cfg.trash),
     });
