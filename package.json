@@ -10,7 +10,7 @@
     "build:native": "node-gyp rebuild",
     "build:ts": "tsc -p tsconfig.json",
     "build": "npm run build:native && npm run build:ts",
-    "test": "node --test \"test/**/*.test.mjs\"",
+    "test": "tsc -p tsconfig.json && node --test \"test/**/*.test.mjs\"",
     "start": "npm run build:ts && electron .",
     "gate:recovery": "npm run build:ts && electron . --gate=recovery",
     "package": "npm run build && electron-builder --mac --arm64 --dir --config.directories.output=\"${RELEASE_DIR:-$HOME/desktop-agent-starter-release}\" && node scripts/sign-adhoc.mjs",

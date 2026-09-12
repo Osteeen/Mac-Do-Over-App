@@ -10,6 +10,8 @@ import { startWindowSensor, stopWindowSensor, front } from './sensors/windows.js
 import { runRecoveryGate, formatReport } from './gates/recovery-gate.js';
 import type { PermissionPane } from '../shared/channels.js';
 import { watchRoots, describeRoots } from './config.js';
+import { Journal } from './journal/journal.js';
+import { startMoveDetector, type MoveDetector } from './journal/move-detector.js';
 
 const args = process.argv.slice(1);
 const gateArg = args.find(a => a.startsWith('--gate='))?.split('=')[1];
@@ -20,6 +22,8 @@ let overlay: BrowserWindow | null = null;
 let edge: BrowserWindow | null = null;
 let onboarding: BrowserWindow | null = null;
 let overlayOpen = false;
+let journal: Journal | null = null;
+let detector: MoveDetector | null = null;
 
 function toggleOverlay(): void {
   if (!overlay) return;
@@ -48,6 +52,7 @@ function buildTray(): void {
         const r = await requestScreenPermission();
         await dialog.showMessageBox({ message: `Screen Recording: ${r.status}`, detail: r.note });
       } },
+    { label: 'Journal snapshot (debug)', click: async () => { await dialog.showMessageBox({ message: 'Journal', detail: journal ? JSON.stringify(journal.freeze(), (_k, v) => typeof v === 'bigint' ? String(v) : v, 2).slice(0, 6000) : 'Journal not running' }); } },
     { label: 'Watched folders', click: async () => { const w = watchRoots(); await dialog.showMessageBox({ message: describeRoots(w), detail: w.roots.join('\n') + (w.warnings.length ? '\n\n' + w.warnings.join('\n') : '') }); } },
     { type: 'separator' },
     { label: 'Quit', click: () => app.quit() },
@@ -158,6 +163,13 @@ async function main(): Promise<void> {
   console.log('[roots]', describeRoots(rootsCfg));
   for (const w of rootsCfg.warnings) console.warn('[roots]', w);
 
+  journal = new Journal();
+  const j = journal;
+  front.on('change', (e) => j.recordFront(e.ts, e.appName, e.title));
+  detector = startMoveDetector(rootsCfg, j);
+  detector.on('ready', (n) => console.log('[journal] watching, files indexed:', n));
+  detector.on('error', (e) => console.warn('[move detector]', String(e)));
+
   const st = permissionStatus();
   if (st.screen !== 'granted' || !st.accessibility) {
     // Show onboarding and do NOT start capture. Starting it while a permission dialog is
@@ -182,6 +194,8 @@ app.on('before-quit', (e) => {
   globalShortcut.unregisterAll();
   stopCapture();
   stopWindowSensor();
+  void detector?.close();
+  journal?.dispose();
   void stopInputSensor().finally(() => app.quit());
 });
 app.on('window-all-closed', () => { /* tray app: keep running */ });
