@@ -6,3 +6,13 @@ release/
 .DS_Store
 gates/**/*.result.json
 gates/eval/fixtures/cases.hidden.json
+
+# local working notes, demo staging and gate evidence - never committed (this repo goes public for submission)
+CLAUDE.md
+RUNBOOK.md
+SPIKES.md
+AUDIT-LOG.md
+demo/
+spikes-codex/
+gates/agent-gate/
+.claude/

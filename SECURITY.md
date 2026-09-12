@@ -102,4 +102,4 @@ system's encrypted swap.
 
 ## Reporting
 
-This is a starter, not a product. Open an issue.
+Mac Do Over is a hackathon build, not a hardened release. Open an issue on this repository.
