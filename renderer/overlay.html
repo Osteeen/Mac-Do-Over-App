@@ -4,7 +4,7 @@
 <style>
   :root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;color:#f2f5f2;background:transparent}
   *{box-sizing:border-box} [hidden]{display:none!important} html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent} button,input{font:inherit} button{cursor:pointer} button:disabled{opacity:.5;cursor:default}
-  #stage{position:fixed;inset:0;display:flex;justify-content:flex-end;padding:20px 20px 20px 0;pointer-events:none}
+  #stage{position:fixed;inset:0;display:flex;justify-content:flex-end;padding:6px 10px 14px 0;pointer-events:none}.panel.drop{animation:drop .22s cubic-bezier(.2,.8,.2,1)}@keyframes drop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.panel.drop{animation:none}}
   .panel{width:min(460px,calc(100vw - 30px));height:100%;max-height:820px;display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;border:1px solid rgba(211,232,219,.16);border-radius:20px;background:linear-gradient(148deg,rgba(31,38,34,.96),rgba(16,23,20,.96));box-shadow:0 28px 68px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
   header{display:flex;align-items:center;gap:9px;padding:17px 16px 12px;border-bottom:1px solid rgba(211,232,219,.09)}
   .live{width:7px;height:7px;border-radius:50%;background:#52d2a1;box-shadow:0 0 0 3px rgba(82,210,161,.1)} .brand{font-weight:750;font-size:14px;letter-spacing:-.025em}.retention{margin-left:auto;color:#b8c4bc;font-size:11px}.close{border:0;background:transparent;color:#aeb9b2;font-size:20px;line-height:1;padding:3px 0 3px 7px}
@@ -390,10 +390,13 @@ addEventListener('keydown', (e) => { if (e.key === 'Escape') window.overlay.hide
 // than REOPEN_MS must not wipe a review or a Find the user is in the middle of, or swallow their click.
 const REOPEN_MS = 1500;
 function whenIdle(fn, tries = 40) { if (!state.busy) { void fn(); return; } if (tries > 0) setTimeout(() => whenIdle(fn, tries - 1), 250); }
-let hiddenAt = 0, lastRefresh = 0;
+// The overlay window starts hidden, so a page that loads hidden must refresh on its very first show.
+let hiddenAt = document.visibilityState === 'hidden' ? 1 : 0, lastRefresh = 0;
 function refreshNow() { lastRefresh = Date.now(); return refresh(); }
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') { hiddenAt = Date.now(); return; }
+  const panel = document.querySelector('.panel');   // drop down from the menu bar on every show
+  panel.classList.remove('drop'); void panel.offsetWidth; panel.classList.add('drop');
   if (hiddenAt && Date.now() - hiddenAt >= REOPEN_MS) { hiddenAt = 0; $('request').value = ''; whenIdle(refreshNow); }
 });
 // Fallback in case a show arrives without a visibility change: only on the plain list, never mid-flow.

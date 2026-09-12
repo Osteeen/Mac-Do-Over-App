@@ -6,11 +6,12 @@ const rendererDir = () => path.join(app.getAppPath(), 'renderer');
 const preload = (name: string) => path.join(__dirname, '..', 'preload', `${name}.js`);
 const base = (name: string) => ({ preload: preload(name), contextIsolation: true, nodeIntegration: false, sandbox: true });
 
-/** Full-display transparent overlay. Idle = click-through. Call setOverlayInteractive(true) before showing content that takes clicks. */
+/** Transparent overlay over the work area. Idle = click-through. Call setOverlayInteractive(true) before showing content that takes clicks. */
 export function createOverlayWindow(): BrowserWindow {
-  const { bounds } = screen.getPrimaryDisplay();
+  // The work area, not the whole display: the panel drops down below the menu bar instead of covering it.
+  const { workArea } = screen.getPrimaryDisplay();
   const win = new BrowserWindow({
-    x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height,
+    x: workArea.x, y: workArea.y, width: workArea.width, height: workArea.height,
     transparent: true, frame: false, hasShadow: false, resizable: false, movable: false,
     alwaysOnTop: true, skipTaskbar: true, show: false, webPreferences: base('overlay'),
   });

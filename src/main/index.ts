@@ -51,9 +51,8 @@ function buildTray(): void {
   icon.setTemplateImage(true);
   tray = new Tray(icon);
   tray.setToolTip(app.getName());
-  tray.setContextMenu(Menu.buildFromTemplate([
-    { label: 'Toggle overlay (Opt+Cmd+Z)', click: toggleOverlay },
-    { label: 'Permissions…', click: () => { if (onboarding && !onboarding.isDestroyed()) onboarding.focus(); else onboarding = createOnboardingWindow(); } },
+  // Gate and debug tools stay available for troubleshooting, but only when STARTER_DEBUG is set.
+  const debugItems: Electron.MenuItemConstructorOptions[] = !process.env.STARTER_DEBUG ? [] : [
     { type: 'separator' },
     { label: 'Run recovery gate', click: async () => {
         const r = runRecoveryGate(app.isPackaged, process.execPath);
@@ -67,10 +66,19 @@ function buildTray(): void {
         await dialog.showMessageBox({ message: `Screen Recording: ${r.status}`, detail: r.note });
       } },
     { label: 'Journal snapshot (debug)', click: async () => { await dialog.showMessageBox({ message: 'Journal', detail: journal ? JSON.stringify(journal.freeze(), (_k, v) => typeof v === 'bigint' ? String(v) : v, 2).slice(0, 6000) : 'Journal not running' }); } },
-    { label: 'Watched folders', click: async () => { const w = watchRoots(); await dialog.showMessageBox({ message: describeRoots(w), detail: w.roots.join('\n') + (w.warnings.length ? '\n\n' + w.warnings.join('\n') : '') }); } },
+  ];
+  const menu = Menu.buildFromTemplate([
+    { label: 'Open Mac Do Over (Option+Command+Z)', click: () => { if (!overlayOpen) toggleOverlay(); } },
     { type: 'separator' },
-    { label: 'Quit', click: () => app.quit() },
-  ]));
+    { label: 'Watched folders', click: async () => { const w = watchRoots(); await dialog.showMessageBox({ message: describeRoots(w), detail: w.roots.join('\n') + (w.warnings.length ? '\n\n' + w.warnings.join('\n') : '') }); } },
+    { label: 'Permissions…', click: () => { if (onboarding && !onboarding.isDestroyed()) onboarding.focus(); else onboarding = createOnboardingWindow(); } },
+    ...debugItems,
+    { type: 'separator' },
+    { label: 'Quit Mac Do Over', click: () => app.quit() },
+  ]);
+  // Like any menu-bar app: a click drops the panel down or puts it away; a right-click shows this menu.
+  tray.on('click', () => toggleOverlay());
+  tray.on('right-click', () => tray?.popUpContextMenu(menu));
 }
 
 function registerIpc(): void {

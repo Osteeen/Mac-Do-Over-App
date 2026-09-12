@@ -1,5 +1,6 @@
 {
   "name": "mac-do-over",
+  "productName": "Mac Do Over",
   "version": "0.1.0",
   "private": true,
   "description": "Mac Do Over finds the file mistake you mean and puts that file back, while leaving everything else alone. macOS only.",
