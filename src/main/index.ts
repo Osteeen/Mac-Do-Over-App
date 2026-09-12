@@ -1,7 +1,7 @@
 import { app, BrowserWindow, Tray, Menu, nativeImage, globalShortcut, dialog } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
-import { createOverlayWindow, createEdgeWindow, createOnboardingWindow, setOverlayInteractive } from './windows.js';
+import { createOverlayWindow, createEdgeWindow, createOnboardingWindow, setOverlayInteractive, positionOverlay } from './windows.js';
 import { handle } from './ipc.js';
 import { permissionStatus, openPermissionPane, promptAccessibility } from './permissions.js';
 import { startCapture, stopCapture, freeze, captureStats, screenPermission, requestScreenPermission } from './capture.js';
@@ -25,7 +25,8 @@ let tray: Tray | null = null;
 let overlay: BrowserWindow | null = null;
 let edge: BrowserWindow | null = null;
 let onboarding: BrowserWindow | null = null;
-let overlayOpen = false;
+/** When blur last hid the overlay. A tray click right after it is the same click, not a reopen. */
+let lastBlurHideAt = 0;
 let journal: Journal | null = null;
 let detector: MoveDetector | null = null;
 let executor: Executor | null = null;
@@ -39,16 +40,32 @@ function remember(s: StripSnapshot): StripSnapshot {
 /** Renderer arguments are untrusted: strings only, bounded length. */
 const arg = (v: unknown, max: number): string | null => (typeof v === 'string' && v.length <= max ? v : null);
 
+/** The window's real visibility is the only source of truth; a flag desyncs on Space switches. */
+function isOverlayShown(): boolean {
+  return !!overlay && !overlay.isDestroyed() && overlay.isVisible();
+}
+
+function showOverlay(): void {
+  if (!overlay || overlay.isDestroyed()) return;
+  positionOverlay(overlay, tray?.getBounds());
+  // A dock-hidden app does not become active on show(); without this, blur never fires and
+  // keystrokes may not reach the input.
+  if (process.platform === 'darwin') app.focus({ steal: true });
+  setOverlayInteractive(overlay, true);
+}
+
+function hideOverlay(): void {
+  if (!overlay || overlay.isDestroyed()) return;
+  overlay.hide();
+}
+
 function toggleOverlay(): void {
-  if (!overlay) return;
-  overlayOpen = !overlayOpen;
-  if (overlayOpen) setOverlayInteractive(overlay, true);
-  else { overlay.setIgnoreMouseEvents(true, { forward: true }); overlay.hide(); }
+  if (isOverlayShown()) hideOverlay(); else showOverlay();
 }
 
 function buildTray(): void {
-  const icon = nativeImage.createFromPath(path.join(app.getAppPath(), 'assets', 'iconTemplate.png'));
-  icon.setTemplateImage(true);
+  // The ring icon in green. Not a template image, so macOS does not recolour it for light or dark menu bars.
+  const icon = nativeImage.createFromPath(path.join(app.getAppPath(), 'assets', 'trayRing.png'));
   tray = new Tray(icon);
   tray.setToolTip(app.getName());
   // Gate and debug tools stay available for troubleshooting, but only when STARTER_DEBUG is set.
@@ -68,7 +85,7 @@ function buildTray(): void {
     { label: 'Journal snapshot (debug)', click: async () => { await dialog.showMessageBox({ message: 'Journal', detail: journal ? JSON.stringify(journal.freeze(), (_k, v) => typeof v === 'bigint' ? String(v) : v, 2).slice(0, 6000) : 'Journal not running' }); } },
   ];
   const menu = Menu.buildFromTemplate([
-    { label: 'Open Mac Do Over (Option+Command+Z)', click: () => { if (!overlayOpen) toggleOverlay(); } },
+    { label: 'Open Mac Do Over (Option+Command+Z)', click: () => { if (!isOverlayShown()) showOverlay(); } },
     { type: 'separator' },
     { label: 'Watched folders', click: async () => { const w = watchRoots(); await dialog.showMessageBox({ message: describeRoots(w), detail: w.roots.join('\n') + (w.warnings.length ? '\n\n' + w.warnings.join('\n') : '') }); } },
     { label: 'Permissions…', click: () => { if (onboarding && !onboarding.isDestroyed()) onboarding.focus(); else onboarding = createOnboardingWindow(); } },
@@ -77,7 +94,8 @@ function buildTray(): void {
     { label: 'Quit Mac Do Over', click: () => app.quit() },
   ]);
   // Like any menu-bar app: a click drops the panel down or puts it away; a right-click shows this menu.
-  tray.on('click', () => toggleOverlay());
+  // Clicking the icon while open blurs first (blur hides it), then fires 'click'; do not reopen.
+  tray.on('click', () => { if (Date.now() - lastBlurHideAt < 400) return; toggleOverlay(); });
   tray.on('right-click', () => tray?.popUpContextMenu(menu));
 }
 
@@ -85,8 +103,8 @@ function registerIpc(): void {
   handle('permissions:status', () => permissionStatus());
   handle<[PermissionPane]>('permissions:open', (_e, pane) => { openPermissionPane(pane); if (pane === 'Accessibility') promptAccessibility(); return true; });
   handle<[boolean]>('overlay:set-interactive', (_e, on) => { if (overlay) setOverlayInteractive(overlay, on); return true; });
-  handle('overlay:hide', () => { if (overlay) { overlayOpen = false; overlay.setIgnoreMouseEvents(true, { forward: true }); overlay.hide(); } return true; });
-  handle('edge:activated', () => { if (!overlayOpen) toggleOverlay(); return true; });
+  handle('overlay:hide', () => { hideOverlay(); return true; });
+  handle('edge:activated', () => { if (!isOverlayShown()) showOverlay(); return true; });
   handle('app:info', () => ({ name: app.getName(), version: app.getVersion(), packaged: app.isPackaged, electron: process.versions.electron, node: process.versions.node }));
   handle('strip:snapshot', () => (journal ? remember(journal.freeze()) : null));
   handle<[unknown, unknown]>('find:preview', (_e, sid, ref) => {
@@ -192,6 +210,13 @@ async function main(): Promise<void> {
   registerIpc();
   buildTray();
   overlay = createOverlayWindow();
+  // Click outside closes it, like any menu-bar popover. hide() itself can emit blur after the
+  // window is already invisible; only a blur that actually hides a shown panel counts.
+  overlay.on('blur', () => {
+    if (!isOverlayShown()) return;
+    lastBlurHideAt = Date.now();
+    hideOverlay();
+  });
   edge = createEdgeWindow();
   globalShortcut.register('Alt+CommandOrControl+Z', toggleOverlay);
   input.on('error', (e) => console.warn('[input sensor]', String(e)));

@@ -6,23 +6,51 @@ const rendererDir = () => path.join(app.getAppPath(), 'renderer');
 const preload = (name: string) => path.join(__dirname, '..', 'preload', `${name}.js`);
 const base = (name: string) => ({ preload: preload(name), contextIsolation: true, nodeIntegration: false, sandbox: true });
 
-/** Transparent overlay over the work area. Idle = click-through. Call setOverlayInteractive(true) before showing content that takes clicks. */
+const OVERLAY_WIDTH = 480;
+const OVERLAY_MAX_HEIGHT = 860;
+const EDGE_MARGIN = 4;
+
+/**
+ * Panel-sized menu-bar popover: a transparent frameless window exactly as wide as the panel
+ * (the page lays a 460px panel inside it), dropped from the top of the work area.
+ * It is created hidden at the top-right of the primary work area; call positionOverlay()
+ * before showing it so it sits under the tray icon. Because the window is only the panel,
+ * it is not click-through: it takes mouse events whenever it is shown, and clicks outside it
+ * land on other apps (main hides it on blur).
+ */
 export function createOverlayWindow(): BrowserWindow {
   // The work area, not the whole display: the panel drops down below the menu bar instead of covering it.
   const { workArea } = screen.getPrimaryDisplay();
   const win = new BrowserWindow({
-    x: workArea.x, y: workArea.y, width: workArea.width, height: workArea.height,
+    x: workArea.x + workArea.width - OVERLAY_WIDTH - EDGE_MARGIN, y: workArea.y,
+    width: OVERLAY_WIDTH, height: Math.min(workArea.height, OVERLAY_MAX_HEIGHT),
     transparent: true, frame: false, hasShadow: false, resizable: false, movable: false,
     alwaysOnTop: true, skipTaskbar: true, show: false, webPreferences: base('overlay'),
   });
   win.setAlwaysOnTop(true, 'screen-saver');
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  win.setIgnoreMouseEvents(true, { forward: true });
   const url = pathToFileURL(path.join(rendererDir(), 'overlay.html')).toString();
   allowSender(win.webContents, url);
   void win.loadURL(url);
   return win;
 }
+
+/** Place the overlay under the tray icon, on the display that holds it, clamped inside the work area. */
+export function positionOverlay(win: BrowserWindow, trayBounds?: Electron.Rectangle): void {
+  const hasBounds = !!trayBounds && trayBounds.width > 0 && trayBounds.height > 0;
+  const display = hasBounds ? screen.getDisplayMatching(trayBounds!) : screen.getPrimaryDisplay();
+  const { workArea } = display;
+  const width = OVERLAY_WIDTH;
+  const height = Math.min(workArea.height, OVERLAY_MAX_HEIGHT);
+  const minX = workArea.x + EDGE_MARGIN;
+  const maxX = workArea.x + workArea.width - width - EDGE_MARGIN;
+  const wanted = hasBounds
+    ? Math.round(trayBounds!.x + trayBounds!.width / 2 - width / 2)
+    : maxX;
+  const x = Math.max(minX, Math.min(wanted, maxX));
+  win.setBounds({ x, y: workArea.y, width, height });
+}
+
 export function setOverlayInteractive(win: BrowserWindow, on: boolean): void {
   win.setIgnoreMouseEvents(!on, { forward: true });
   if (on) { win.show(); win.focus(); }
