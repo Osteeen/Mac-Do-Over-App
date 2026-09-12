@@ -8,7 +8,7 @@
   .panel{width:min(460px,calc(100vw - 30px));height:100%;max-height:820px;display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;border:1px solid rgba(211,232,219,.16);border-radius:20px;background:linear-gradient(148deg,rgba(31,38,34,.96),rgba(16,23,20,.96));box-shadow:0 28px 68px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
   header{display:flex;align-items:center;gap:9px;padding:17px 16px 12px;border-bottom:1px solid rgba(211,232,219,.09)}
   .live{width:7px;height:7px;border-radius:50%;background:#52d2a1;box-shadow:0 0 0 3px rgba(82,210,161,.1)} .brand{font-weight:750;font-size:14px;letter-spacing:-.025em}.retention{margin-left:auto;color:#b8c4bc;font-size:11px}.close{border:0;background:transparent;color:#aeb9b2;font-size:20px;line-height:1;padding:3px 0 3px 7px}
-  .meter{display:flex;gap:3px;height:18px;align-items:end;padding:0 16px 13px;border-bottom:1px solid rgba(211,232,219,.09)}.meter span{flex:1;min-width:4px;border-radius:2px 2px 0 0;background:#4b695d}.meter span:nth-child(2n){height:45%}.meter span:nth-child(3n){height:70%}.meter span:nth-child(4n){height:35%}.meter span:nth-child(5n){height:85%}.meter span:nth-last-child(-n+4){background:#72d7a9}
+  .meter{display:flex;gap:3px;height:32px;align-items:flex-end;padding:0 16px 12px;border-bottom:1px solid rgba(211,232,219,.09)}.meter span{flex:1;min-width:4px;height:2px;border-radius:2px 2px 0 0;background:#34483f;transition:height .2s ease}
   .list-view,.review-view{display:flex;min-height:0;flex:1;flex-direction:column}.section-label{display:flex;justify-content:space-between;padding:15px 16px 8px;color:#99a99f;font-size:10px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.section-label span:last-child{font-weight:500;letter-spacing:0;text-transform:none}
   .events{padding:0 8px;overflow:auto}.event{width:100%;display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;padding:9px 8px;border:0;border-radius:10px;background:transparent;color:#eef2ef;text-align:left}.event:hover,.event:focus-visible{outline:0;background:rgba(132,181,154,.1)}.kind{display:grid;place-items:center;width:25px;height:25px;border:1px solid rgba(215,235,219,.1);border-radius:7px;background:#29342e;color:#a5d4bd;font-size:8px;font-weight:800}.kind.pdf{background:#432d2b;color:#f2b6ac}.kind.txt{background:#203c36;color:#9fdfcc}.kind.png{background:#493a22;color:#efd484}.kind.num{background:#244128;color:#a7d9aa}.event-name{min-width:0;font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.event-route{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;color:#b9c2bb;font-size:10px;line-height:1.35}.pill{padding:2px 4px;border-radius:4px;background:rgba(255,255,255,.05);color:#d0d7d1}.arrow{color:#62d6a6;font-weight:800}.age{padding-top:2px;color:#9ca99f;font-size:10px;white-space:nowrap}.flag{display:inline-block;margin-left:4px;padding:2px 4px;border-radius:3px;background:#755323;color:#ffda86;font:800 8px -apple-system,BlinkMacSystemFont,sans-serif;letter-spacing:.05em;vertical-align:middle}
   .why{margin-top:4px;color:#9fdcc0;font-size:10px;line-height:1.35}.empty{padding:18px 8px;color:#aab5ad;font-size:12px;line-height:1.4}.show-all{margin:4px 8px 8px;border:0;background:transparent;color:#72d7a9;font-size:11px;font-weight:700;text-align:left;padding:4px 0}
@@ -17,7 +17,7 @@
   .review-head{display:flex;align-items:center;gap:10px;padding:15px 16px 12px;border-bottom:1px solid rgba(211,232,219,.09)}.back{border:0;background:transparent;color:#d2ddd5;font-size:18px;padding:0}.review-title{font-size:14px;font-weight:750;letter-spacing:-.02em}.recorded{margin-left:auto;border-radius:999px;padding:4px 8px;background:#dbeee9;color:#176549;font-size:10px;font-weight:750}.review-scroll{overflow:auto;padding:12px 16px 16px}.card{margin-bottom:10px;padding:12px;border:1px solid rgba(208,231,215,.1);border-radius:12px;background:rgba(9,15,11,.18)}.card-title{margin-bottom:10px;color:#a3b0a7;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.journey{position:relative;padding-left:18px}.journey:before{position:absolute;top:7px;bottom:7px;left:4px;width:1px;background:#69d7a8;content:""}.journey-item{position:relative;padding:0 0 14px}.journey-item:last-child{padding-bottom:0}.journey-item:before{position:absolute;left:-17px;top:3px;width:7px;height:7px;border:2px solid #69d7a8;border-radius:50%;background:#19362b;content:""}.journey-item.gap:before{border-color:#8a7a52;background:transparent;border-style:dashed}.journey-time{color:#9daaa2;font-size:9px;font-weight:750;letter-spacing:.07em}.journey-place{margin-top:3px;font-size:12px;font-weight:750;overflow-wrap:anywhere}.journey-detail{margin-top:3px;color:#aab5ad;font-size:10px;line-height:1.35;overflow-wrap:anywhere}.journey-item.gap .journey-detail{color:#e7c77f}.reason{display:grid;gap:7px;font-size:11px;line-height:1.4;overflow-wrap:anywhere}.pins{display:grid;gap:6px;margin-top:10px}.pin{display:grid;grid-template-columns:58px 1fr;gap:7px;font-size:10px;line-height:1.35;overflow-wrap:anywhere}.pin b{color:#6fd2a6;font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace}.note{margin:10px 0 0;color:#a2aea6;font-size:10px;line-height:1.35}.approval{border-color:rgba(105,215,168,.48);background:rgba(36,87,64,.16)}.field-label{margin:10px 0 4px;color:#a7b5aa;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.field{padding:9px;border:1px solid rgba(211,232,219,.1);border-radius:7px;background:rgba(255,255,255,.06);font:600 11px ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}.field small{display:block;margin-top:5px;color:#a2aea6;font:10px -apple-system,BlinkMacSystemFont,sans-serif}.approval-copy{margin:11px 0 0;color:#b7c0b9;font-size:10px;line-height:1.4}.approve-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:13px}.approve{border:0;border-radius:999px;padding:10px 16px;background:#10845b;color:#effff8;font-size:12px;font-weight:800}.secondary{border:1px solid rgba(105,215,168,.48);border-radius:999px;padding:9px 14px;background:transparent;color:#bdf0d5;font-size:12px;font-weight:800;overflow-wrap:anywhere;text-align:left}.cancel{border:0;background:transparent;color:#ecf2ed;font-size:12px;font-weight:750}.receipt{display:none;margin-top:12px;padding:9px;border-radius:8px;font-size:11px;font-weight:700;line-height:1.4;overflow-wrap:anywhere}.receipt.show{display:block}.receipt.ok{background:rgba(48,145,100,.2);color:#a9e7c5}.receipt.warn{background:rgba(117,83,35,.35);color:#ffda86}.receipt.bad{background:rgba(140,50,45,.4);color:#ffb4a8}
   details summary{margin-top:10px;color:#72d7a9;font-size:11px;font-weight:700;cursor:pointer}pre.payload{max-height:220px;overflow:auto;margin:8px 0 0;padding:9px;border-radius:7px;background:rgba(0,0,0,.25);color:#cfe0d5;font:10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere}ul.not-sent{margin:0;padding-left:16px;color:#d0d7d1;font-size:11px;line-height:1.6}
 </style></head><body>
-<main id="stage"><section class="panel" aria-label="Mac Do Over"><header><span class="live"></span><span class="brand">Mac Do Over</span><span class="retention">60 s frames · 10 min events</span><button class="close" id="close" aria-label="Close">×</button></header><div class="meter" aria-label="Recent recording buffer"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<main id="stage"><section class="panel" aria-label="Mac Do Over"><header><span class="live"></span><span class="brand">Mac Do Over</span><span class="retention">60 s frames · 10 min events</span><button class="close" id="close" aria-label="Close">×</button></header><div class="meter" id="meter" role="img" aria-label="Recorded activity over the last 10 minutes"></div>
 
 <section class="list-view" id="list-view">
   <div class="section-label"><span id="list-label">Recent changes</span><span id="list-count"></span></div>
@@ -125,6 +125,7 @@ async function refresh(message, warn) {
   let snap = null;
   try { snap = api ? await api.snapshot() : null; } catch { snap = null; }
   state.snap = snap; state.busy = false;
+  renderMeter();
   show('list'); renderList();
   if (message) notice(message, warn);
   else if (!snap) notice('Mac Do Over is still starting. Open it again in a moment.', true);
@@ -160,6 +161,32 @@ function renderList() {
     all.addEventListener('click', () => { state.matches = null; notice(''); renderList(); });
     box.append(all);
   }
+}
+
+/** Sixteen slices of the last ten minutes. Bar height is how many events were recorded in each slice, newest on the right. */
+const METER_BARS = 16, METER_MS = 10 * 60_000;
+function renderMeter() {
+  const meter = $('meter'), snap = state.snap;
+  const counts = new Array(METER_BARS).fill(0);
+  let total = 0;
+  if (snap) {
+    const start = snap.frozenAt - METER_MS, slice = METER_MS / METER_BARS;
+    for (const e of snap.events || []) {
+      if (typeof e.ts !== 'number' || e.ts < start || e.ts > snap.frozenAt) continue;
+      counts[Math.min(METER_BARS - 1, Math.floor((e.ts - start) / slice))]++; total++;
+    }
+  }
+  const peak = Math.max(3, ...counts);
+  meter.replaceChildren(...counts.map((n, i) => {
+    const bar = document.createElement('span');
+    // Empty slices stay a flat stub. Older slices are dimmer and newer ones brighter, as in the design.
+    const t = i / (METER_BARS - 1);
+    bar.style.height = n ? `${4 + Math.round((n / peak) * 14)}px` : '2px';   // at most 18px, inside the 19px strip
+    if (n) bar.style.background = `rgb(${Math.round(52 + t * 62)}, ${Math.round(105 + t * 110)}, ${Math.round(88 + t * 81)})`;
+    return bar;
+  }));
+  const label = snap ? `${total} ${total === 1 ? 'event' : 'events'} recorded in the last 10 minutes` : 'Nothing recorded yet';
+  meter.setAttribute('aria-label', label); meter.title = label;
 }
 
 function backToList() {
