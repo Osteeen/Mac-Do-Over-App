@@ -54,10 +54,17 @@ export async function runFind(snap: StripSnapshot, reference: unknown, opts: Fin
       }),
       signal: ctrl.signal,
     });
-    if (!res.ok) return { status: 'error', reason: `OpenAI answered with an error (${res.status}). You can still pick from the list.` };
+    if (!res.ok) {
+      console.warn('[find] OpenAI answered with status', res.status);
+      return { status: 'error', reason: `OpenAI answered with an error (${res.status}). You can still pick from the list.` };
+    }
     const data = (await res.json()) as { output_text?: string; output?: Array<{ content?: Array<{ type?: string; text?: string }> }> };
     text = data.output_text ?? data.output?.flatMap((o) => o.content ?? []).find((c) => c.type === 'output_text')?.text;
-  } catch {
+  } catch (err) {
+    // Why it failed, for the Terminal log only: an error code or message, never the key or the payload.
+    const e = err as { code?: string; message?: string; cause?: { code?: string; message?: string } } | undefined;
+    console.warn('[find] request failed:', ctrl.signal.aborted ? 'no answer within the time limit'
+      : String(e?.cause?.code ?? e?.code ?? e?.cause?.message ?? e?.message ?? err).slice(0, 160));
     return ctrl.signal.aborted
       ? { status: 'timeout', reason: 'Find took too long. You can still pick from the list.' }
       : { status: 'offline', reason: 'No connection. You can still pick from the list.' };

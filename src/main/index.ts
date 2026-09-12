@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu, nativeImage, globalShortcut, dialog } from 'electron';
+import { app, BrowserWindow, Tray, Menu, nativeImage, globalShortcut, dialog, net } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import { createOverlayWindow, createEdgeWindow, createOnboardingWindow, setOverlayInteractive, positionOverlay } from './windows.js';
@@ -121,7 +121,9 @@ function registerIpc(): void {
   handle<[unknown, unknown]>('find:send', async (_e, sid, ref) => {
     const s = snapshots.get(arg(sid, 32) ?? '');
     if (!s) return { status: 'error', reason: 'This list is out of date. Open it again.' };
-    return runFind(s, arg(ref, 2000) ?? '');
+    // Chromium's network stack, not Node's: it drops dead connections when macOS reports a network change,
+    // so Find works again after Wi-Fi drops and comes back.
+    return runFind(s, arg(ref, 2000) ?? '', { fetchImpl: net.fetch as unknown as typeof fetch });
   });
   handle<[unknown, unknown]>('approval:open', (_e, sid, cid) => {
     const s = arg(sid, 32), c = arg(cid, 32);
